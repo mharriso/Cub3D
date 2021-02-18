@@ -43,6 +43,11 @@ int		get_b(int trgb)
 
 int main()
 {
+	int		x;
+	int		y;
+	int		color;
+	int		save;
+	int		buf;
 	srand(time(NULL));
 	int trgb = create_trgb(BLUE, BLUE, BLUE, BLUE);
 	// printf("%08x\n", trgb);
@@ -50,16 +55,29 @@ int main()
 	// printf("%08x\n", get_r(trgb));
 	// printf("%08x\n", get_g(trgb));
 	// printf("%08x\n", get_b(trgb));
-	printf("%08x\n", WHITE & WHITE);
-	printf("%08x\n", BLUE & RED);
-	printf("%08x\n", BLUE & GREEN);
-	printf("%08x\n", BLUE & BLUE);
-	printf("%08x\n", BLUE & WHITE);
+	// printf("%08x\n", WHITE & WHITE);
+	// printf("%08x\n", BLUE & RED);
+	// printf("%08x\n", BLUE & GREEN);
+	// printf("%08x\n", BLUE & BLUE);
+	// printf("%08x\n", BLUE & WHITE);
 
-	printf("%08x\n", BLUE & 0x00010101);
-	printf("%08x\n", RED & 0x00010101);
-	printf("%08x\n", CYAN | 0x00010101);
+	// printf("%08x\n", BLUE & 0x00010101);
+	// printf("%08x\n", RED ^ 0x00010101);
+	// printf("%08x\n", RED & 0x00010101);
+	// printf("%08x\n", RED | 0x00010101);
+	// printf("%08x\n", 0x00010101 - RED & 0x00010101);
+	//printf("%08x\n", CYAN | 0x00010101);
+	// color = B;
+	// printf("%08x\n", color);
+	// buf = color;
+	// color <<= 1;
+	// printf("%08x\n", color);
+	// color |= buf;
+	// printf("%08x\n", color);
 
+	color = RED;
+	for (int i = 0; i < 50; i++)
+		 printf("%08x\n", color--);
 
 
 	// for(int n = 0; n < 24; n+=8)
