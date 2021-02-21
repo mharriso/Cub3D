@@ -69,15 +69,16 @@ int main()
 	//printf("%08x\n", CYAN | 0x00010101);
 	// color = B;
 	// printf("%08x\n", color);
-	// buf = color;
-	// color <<= 1;
-	// printf("%08x\n", color);
+	color = 4;
+	//color <<= 8;
+	printf("%08x\n", color);
+	printf("%08x\n", color & BLUE);
 	// color |= buf;
 	// printf("%08x\n", color);
 
-	color = RED;
-	for (int i = 0; i < 50; i++)
-		 printf("%08x\n", color--);
+	// color = RED;
+	// for (int i = 0; i < 50; i++)
+	// 	 printf("%08x\n", color--);
 
 
 	// for(int n = 0; n < 24; n+=8)
