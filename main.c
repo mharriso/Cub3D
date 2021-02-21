@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 19:54:07 by mharriso          #+#    #+#             */
-/*   Updated: 2021/02/20 20:33:11 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/02/21 04:00:04 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int			main(int argc, char **argv)
 {
 	t_vars	vars;
 	t_data	img;
+	
 	int		size;
 	int		color;
 	int		x;

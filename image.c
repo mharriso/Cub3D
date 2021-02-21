@@ -35,26 +35,32 @@ t_data	resize(t_data img, t_vars *vars, int new_x, int new_y)
 int			main()
 {
 	t_vars	vars;
-	t_data	img;
-	t_data	new_img;
+	t_data	back;
+	t_data	new_back;
+	t_data	alpaca;
+	t_data	new_alpaca;
 
 	int		rx;
 	int		ry;
-	char	*relative_path;
 
-	vars.mlx = mlx_init();
 	rx = 1920;
 	ry = 1080;
-	//relative_path = "ballons.xpm";
-	relative_path = "earth-1080.xpm";
+	vars.mlx = mlx_init();
 	vars.win = mlx_new_window(vars.mlx, rx, ry, "PICTURE");
-	img.img = mlx_xpm_file_to_image(vars.mlx, relative_path, &img.width, &img.height);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
-	new_img = resize(img, &vars, 1920 / 2, 1080 / 2);
+	back.img = mlx_xpm_file_to_image(vars.mlx, "earth-1080.xpm", &back.width, &back.height);
+	back.addr = mlx_get_data_addr(back.img, &back.bits_per_pixel, &back.line_length, &back.endian);
 
-	mlx_put_image_to_window(vars.mlx, vars.win, new_img.img, 0, 0);
+	alpaca.img = mlx_xpm_file_to_image(vars.mlx, "alpaca.xpm", &alpaca.width, &alpaca.height);
+	alpaca.addr = mlx_get_data_addr(alpaca.img, &alpaca.bits_per_pixel, &alpaca.line_length, &alpaca.endian);
+
+
+	new_back = resize(back, &vars, 1920, 1080);
+	new_alpaca = resize(alpaca, &vars, alpaca.width / 4, alpaca.height / 4);
+
+	mlx_put_image_to_window(vars.mlx, vars.win, new_back.img, 0, 0);
+	mlx_put_image_to_window(vars.mlx, vars.win, new_alpaca.img, 500, 400);
+
 	mlx_hook(vars.win, 2, 1L<<0, close, &vars);
 	mlx_loop(vars.mlx);
-
 }
