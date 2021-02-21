@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 19:54:07 by mharriso          #+#    #+#             */
-/*   Updated: 2021/02/21 04:00:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/02/21 19:06:04 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int		close(int keycode, t_vars *vars)
 {
 	if(keycode == 53)
 	{
-		//mlx_clear_window(vars->mlx, vars->win);
 		mlx_destroy_window(vars->mlx, vars->win);
 		exit(0);
 	}
@@ -40,12 +39,11 @@ int		bye(int keycode, t_vars *vars)
 	return 0;
 }
 
-
 int			main(int argc, char **argv)
 {
 	t_vars	vars;
 	t_data	img;
-	
+
 	int		size;
 	int		color;
 	int		x;
@@ -62,15 +60,11 @@ int			main(int argc, char **argv)
 	ry = 2160;
 
 	rx = 255 * size;
-	ry = 1000;
+	ry = 255 * 7;
 
-	int img_height = 500;
-	int img_width = 500;
-	char *relative_path = "ballons.xpm";
 	vars.win = mlx_new_window(vars.mlx, rx, ry, "GRADIENTS");
+
 	img.img = mlx_new_image(vars.mlx, rx, ry);
-	//img.img = mlx_xpm_file_to_image(vars.mlx, relative_path, &img_width, &img_height);
-	//printf("%d\n%d\n", img_height, img_width);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
 	//cmyk(img, rx, ry);
@@ -81,9 +75,7 @@ int			main(int argc, char **argv)
 	gradient(img, rx, ry, size);
 
 	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
-	//mlx_key_hook(vars.win, close, &vars);
+
 	mlx_hook(vars.win, 2, 1L<<0, close, &vars);
-	// mlx_hook(vars.win, 7, 1L<<4, hello, &vars);
-	// mlx_hook(vars.win, 8, 1L<<5, bye, &vars);
 	mlx_loop(vars.mlx);
 }

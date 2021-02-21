@@ -28,12 +28,21 @@ typedef struct  s_data {
     int		endian;
 	int		height;
 	int		width;
+	int		x;
+	int		y;
 }               t_data;
 
 typedef struct  s_vars {
     void        *mlx;
     void        *win;
 }				t_vars;
+
+typedef struct	s_art
+{
+	t_vars	*vars;
+	t_data	*back;
+	t_data	*obj;
+}				t_art;
 
 void	cmyk(t_data img, int rx, int ry);
 void	mix_stripes(t_data img, int rx, int ry, int size);

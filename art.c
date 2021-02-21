@@ -249,8 +249,8 @@ void	gradient(t_data img, int rx, int ry, int size)
 		// 	move = 1;
 		if((color & CYAN) == CYAN)
 			move = R;
-		if(color == WHITE)
-			move = -1 * R;
+		if(color == WHITE -1)
+			move = -R;
 		color += move;
 		for(int x = 0; x < rx; x++)
 		{

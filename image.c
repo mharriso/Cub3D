@@ -4,15 +4,29 @@
 #include <time.h>
 #include "art.h"
 
-int		close(int keycode, t_vars *vars)
+int		close(t_vars *vars)
 {
-	if(keycode == 53)
-	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		exit(0);
-	}
+	mlx_destroy_window(vars->mlx, vars->win);
+	exit(0);
 	return 0;
 }
+int		key_handler(int keycode, t_art *art)
+{
+	int	speed;
+	speed = 25;
+	if(keycode == 53)
+		close(art->vars);
+	if(keycode == 13)
+		art->obj->y -= speed;
+	if(keycode == 1)
+		art->obj->y += speed;
+	if(keycode == 0)
+		art->obj->x -= speed;
+	if(keycode == 2)
+		art->obj->x += speed;
+	return 0;
+}
+
 t_data	resize(t_data img, t_vars *vars, int new_x, int new_y)
 {
 	t_data	new_img;
@@ -32,6 +46,13 @@ t_data	resize(t_data img, t_vars *vars, int new_x, int new_y)
 		}
 	return new_img;
 }
+int		render_next_frame(t_art *art)
+{
+	mlx_clear_window(art->vars->mlx, art->vars->win);
+	mlx_put_image_to_window(art->vars->mlx, art->vars->win, art->back->img, 0, 0);
+	mlx_put_image_to_window(art->vars->mlx, art->vars->win, art->obj->img, art->obj->x, art->obj->y);
+	return 0;
+}
 int			main()
 {
 	t_vars	vars;
@@ -39,6 +60,7 @@ int			main()
 	t_data	new_back;
 	t_data	alpaca;
 	t_data	new_alpaca;
+	t_art	art;
 
 	int		rx;
 	int		ry;
@@ -48,19 +70,25 @@ int			main()
 	vars.mlx = mlx_init();
 	vars.win = mlx_new_window(vars.mlx, rx, ry, "PICTURE");
 
-	back.img = mlx_xpm_file_to_image(vars.mlx, "earth-1080.xpm", &back.width, &back.height);
+	back.img = mlx_xpm_file_to_image(vars.mlx, "planet3840x2160.xpm", &back.width, &back.height);
 	back.addr = mlx_get_data_addr(back.img, &back.bits_per_pixel, &back.line_length, &back.endian);
 
-	alpaca.img = mlx_xpm_file_to_image(vars.mlx, "alpaca.xpm", &alpaca.width, &alpaca.height);
+	alpaca.img = mlx_xpm_file_to_image(vars.mlx, "alpaca1.xpm", &alpaca.width, &alpaca.height);
 	alpaca.addr = mlx_get_data_addr(alpaca.img, &alpaca.bits_per_pixel, &alpaca.line_length, &alpaca.endian);
 
 
-	new_back = resize(back, &vars, 1920, 1080);
-	new_alpaca = resize(alpaca, &vars, alpaca.width / 4, alpaca.height / 4);
+	new_back = resize(back, &vars, rx, ry);
+	new_alpaca = resize(alpaca, &vars, alpaca.width / 2 , alpaca.height / 2);
 
-	mlx_put_image_to_window(vars.mlx, vars.win, new_back.img, 0, 0);
-	mlx_put_image_to_window(vars.mlx, vars.win, new_alpaca.img, 500, 400);
+	new_alpaca.x = 400;
+	new_alpaca.y = 500;
 
-	mlx_hook(vars.win, 2, 1L<<0, close, &vars);
+	art.back = &new_back;
+	art.obj = &new_alpaca;
+	art.vars = &vars;
+
+	mlx_hook(vars.win, 2, 1L<<0, key_handler, &art);
+	mlx_hook(vars.win, 17, 1L<<17, close, &vars);
+	mlx_loop_hook(vars.mlx, render_next_frame, &art);
 	mlx_loop(vars.mlx);
 }
