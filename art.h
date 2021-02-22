@@ -30,28 +30,30 @@ typedef struct  s_data {
 	int		width;
 	int		x;
 	int		y;
-}               t_data;
+}               t_img;
 
 typedef struct  s_vars {
-    void        *mlx;
-    void        *win;
+    void	*mlx;
+    void	*win;
+	int		rx;
+	int		ry;
 }				t_vars;
 
 typedef struct	s_art
 {
 	t_vars	*vars;
-	t_data	*back;
-	t_data	*obj;
+	t_img	*back;
+	t_img	*obj;
 }				t_art;
 
-void	cmyk(t_data img, int rx, int ry);
-void	mix_stripes(t_data img, int rx, int ry, int size);
-void	mix_cylinders(t_data img, int rx, int ry, int size);
-void	random_gradient(t_data img, int rx, int ry);
-void	mix(t_data img, int rx, int ry, int size);
-void	gradient(t_data img, int rx, int ry, int size);
+void	cmyk(t_img img, int rx, int ry);
+void	mix_stripes(t_img img, int rx, int ry, int size);
+void	mix_cylinders(t_img img, int rx, int ry, int size);
+void	random_gradient(t_img img, int rx, int ry);
+void	mix(t_img img, int rx, int ry, int size);
+void	gradient(t_img img, int rx, int ry, int size);
 
 int		invert_color(int color);
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
-int		my_mlx_pixel_get(t_data *data, int x, int y);
+void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
+int		my_mlx_pixel_get(t_img *data, int x, int y);
 #endif

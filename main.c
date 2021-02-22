@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 19:54:07 by mharriso          #+#    #+#             */
-/*   Updated: 2021/02/21 19:06:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/02/22 20:48:02 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int		bye(int keycode, t_vars *vars)
 int			main(int argc, char **argv)
 {
 	t_vars	vars;
-	t_data	img;
+	t_img	img;
 
 	int		size;
 	int		color;

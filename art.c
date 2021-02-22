@@ -5,7 +5,7 @@ int		invert_color(int color)
 	return (~color & WHITE) | (color & TRANSP);
 }
 
-void            my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void            my_mlx_pixel_put(t_img *data, int x, int y, int color)
 {
     char    *dst;
 
@@ -13,7 +13,7 @@ void            my_mlx_pixel_put(t_data *data, int x, int y, int color)
     *(unsigned int*)dst = color;
 }
 
-int            my_mlx_pixel_get(t_data *data, int x, int y)
+int            my_mlx_pixel_get(t_img *data, int x, int y)
 {
     char    *dst;
 
@@ -22,7 +22,7 @@ int            my_mlx_pixel_get(t_data *data, int x, int y)
 }
 
 
-void	cmyk(t_data img, int rx, int ry)
+void	cmyk(t_img img, int rx, int ry)
 {
 	int		x;
 	int		y;
@@ -54,7 +54,7 @@ void	cmyk(t_data img, int rx, int ry)
 			my_mlx_pixel_put(&img, x, y, color += G);
 	}
 }
-void	mix_stripes(t_data img, int rx, int ry, int size)
+void	mix_stripes(t_img img, int rx, int ry, int size)
 {
 	int		x;
 	int		y;
@@ -81,7 +81,7 @@ void	mix_stripes(t_data img, int rx, int ry, int size)
 		}
 	}
 }
-void	mix_cylinders(t_data img, int rx, int ry, int size)
+void	mix_cylinders(t_img img, int rx, int ry, int size)
 {
 	int		x;
 	int		y;
@@ -112,7 +112,7 @@ void	mix_cylinders(t_data img, int rx, int ry, int size)
 		}
 	}
 }
-void	random_gradient(t_data img, int rx, int ry)
+void	random_gradient(t_img img, int rx, int ry)
 {
 	int		x;
 	int		y;
@@ -148,7 +148,7 @@ void	random_gradient(t_data img, int rx, int ry)
 	}
 
 }
-void	mix(t_data img, int rx, int ry, int size)
+void	mix(t_img img, int rx, int ry, int size)
 {
 	int		x;
 	int		y;
@@ -196,7 +196,7 @@ void	mix(t_data img, int rx, int ry, int size)
 		}
 	}
 }
-void	gradient0(t_data img, int rx, int ry, int size)
+void	gradient0(t_img img, int rx, int ry, int size)
 {
 	int		color;
 	int		move;
@@ -231,7 +231,7 @@ void	gradient0(t_data img, int rx, int ry, int size)
 	}
 }
 
-void	gradient(t_data img, int rx, int ry, int size)
+void	gradient(t_img img, int rx, int ry, int size)
 {
 	int		color;
 	int		move;
