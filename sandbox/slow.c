@@ -56,6 +56,22 @@ void	big_heart(void *mlx_ptr, void *win_ptr, int s_x, int s_y, int color)
 
 
 
+
+def delete_spaces(s):
+	l = len(s) - 1
+	if l == -1:
+		return
+	i = 0
+	c = 'w'
+	while i < l and s[i] == c:
+		i += 1
+	while l and s[l] == c:
+		l -= 1
+	while i <= l:
+		if s[i] != c or s[i - 1] != c:
+			print(s[i], end='')
+		i += 1;
+
 int main()
 {
 	void	*mlx;

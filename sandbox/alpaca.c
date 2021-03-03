@@ -1,4 +1,4 @@
-#include <mlx.h>
+#include "mlx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -70,36 +70,37 @@ int			main()
 {
 	t_vars	vars;
 	t_img	back;
-	t_img	new_back;
+	//t_img	new_back;
 	t_img	alpaca;
-	t_img	new_alpaca;
+	//t_img	new_alpaca;
 	t_art	art;
 
 	srand(time(NULL));
+
 	vars.rx = 1920;
 	vars.ry = 1080;
 	vars.mlx = mlx_init();
+	//mlx_get_screen_size(vars.mlx, &vars.rx, &vars.ry);
 	vars.win = mlx_new_window(vars.mlx, vars.rx, vars.ry, "PICTURE");
 
-	back.img = mlx_xpm_file_to_image(vars.mlx, "planet3840x2160.xpm", &back.width, &back.height);
+	back.img = mlx_xpm_file_to_image(vars.mlx, "pic/planet3840x2160.xpm", &back.width, &back.height);
 	back.addr = mlx_get_data_addr(back.img, &back.bits_per_pixel, &back.line_length, &back.endian);
 
-	alpaca.img = mlx_xpm_file_to_image(vars.mlx, "alpaca1.xpm", &alpaca.width, &alpaca.height);
+	alpaca.img = mlx_xpm_file_to_image(vars.mlx, "pic/alpaca1.xpm", &alpaca.width, &alpaca.height);
 	alpaca.addr = mlx_get_data_addr(alpaca.img, &alpaca.bits_per_pixel, &alpaca.line_length, &alpaca.endian);
 
 
-	new_back = resize(back, &vars, vars.rx, vars.ry);
-	new_alpaca = resize(alpaca, &vars, alpaca.width / 2 , alpaca.height / 2);
+	back = resize(back, &vars, vars.rx, vars.ry);
+	alpaca = resize(alpaca, &vars, 200 , 300);
 
-	new_alpaca.width = alpaca.width / 2;
-	new_alpaca.height = alpaca.height / 2;
-	new_alpaca.x = new_alpaca.width + rand()%(vars.rx - new_alpaca.width);
-	new_alpaca.y = new_alpaca.height + rand()%(vars.ry - new_alpaca.height);
-
-	art.back = &new_back;
-	art.obj = &new_alpaca;
+	alpaca.width = 200;
+	alpaca.height = 300;
+	alpaca.x = alpaca.width + rand()%(vars.rx - alpaca.width);
+	alpaca.y = alpaca.height + rand()%(vars.ry - alpaca.height);
+	art.back = &back;
+	art.obj = &alpaca;
 	art.vars = &vars;
-	//printf("%d %d\n%d %d\n", alpaca.width, alpaca.height, new_alpaca.width, new_alpaca.height);
+
 	mlx_hook(vars.win, 2, 1L<<0, key_handler, &art);
 	mlx_hook(vars.win, 17, 1L<<17, close, &vars);
 	mlx_loop_hook(vars.mlx, render_next_frame, &art);

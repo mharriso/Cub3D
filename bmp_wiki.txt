@@ -1,0 +1,168 @@
+/* Компилируется строкой: cc -o xtest xtest.c -I/usr/X11R6/include -L/usr/X11R6/lib -lX11 -lm  */
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <math.h>
+#include "bitmap.h" /* Здесь определения заголовков BMP как было описано выше в этой статье (структуры должны быть упакованы на 2 байта!) */
+
+static XImage *CreateImageFromBuffer(Display*, unsigned char *, int, int);
+
+main(int argc, char *argv[])
+{
+    Display *dis;
+    Window win;/* Наше окно */
+    XEvent event;/* События */
+    GC gc;/* Графический контекст */
+
+    XImage *image;
+    int  n, width, height, fd, size;
+    unsigned char *data;
+    BITMAPFILEHEADER bmp;
+    BITMAPINFOHEADER inf;
+    char* buf;
+
+    if (argc < 2) {
+	perror("use: xtest file.bmp\n");
+	exit(1);
+    }
+
+  if ((fd = open(argv[1], O_RDONLY)) == -1) {
+        printf("Error open bitmap\n");
+        exit(1);
+    }
+
+  read(fd, &bmp, sizeof(BITMAPFILEHEADER));
+  read(fd, &inf,sizeof(BITMAPINFOHEADER));
+
+  width = inf.biWidth;
+  height = inf.biHeight;
+
+    if ((dis = XOpenDisplay(getenv("DISPLAY"))) == NULL) {
+	printf("Can't connect X server:%s\n", strerror(errno));
+	exit(1);
+    }
+
+    win = XCreateSimpleWindow(dis, RootWindow(dis, DefaultScreen(dis)), 0, 0, width, height, 5,
+                   BlackPixel(dis, DefaultScreen(dis)), WhitePixel(dis, DefaultScreen(dis)));
+
+    XSetStandardProperties(dis, win, argv[1], argv[0], None, argv, argc, NULL);
+    gc = DefaultGC(dis, DefaultScreen(dis));
+
+ /* Иногда в структуре это место не заполнено */
+    if(inf.biSizeImage == 0)  {
+    /* Вычислим размер */
+     size = width * 3 + width % 4;
+     size = size * height;
+    } else {
+      size = inf.biSizeImage;
+     }
+
+    buf = malloc(size);
+    if(buf == NULL) {
+	perror("malloc");
+	exit(1);
+    }
+    printf("size =%d байтов выделено\n", size);
+
+     /* Сместимся на начало самого изображения */
+    lseek(fd, bmp.bfOffBits, SEEK_SET);
+
+    /* Читаем в буфер */
+    n = read(fd, buf, size);
+    printf("size =%d байт прочитано\n", n);
+
+   image = CreateImageFromBuffer(dis, buf, width, height);
+
+   /* Удалим буфер - он нам больше не нужен */
+   free(buf);
+
+    XMapWindow(dis, win);
+    XSelectInput(dis, win, ExposureMask | KeyPressMask);
+    while (1) {
+	XNextEvent(dis, &event);
+	if (event.xany.window == win) {
+	    switch (event.type) {
+	    case Expose:
+		XPutImage(dis, win, gc, image, 0, 0, 0, 0, image->width, image->height);
+		break;
+
+	    case KeyPress:
+		if (XLookupKeysym(&event.xkey, 0) == XK_q) {
+		    XDestroyImage(image);
+		    XCloseDisplay(dis);
+    	    	    close(fd);
+		    exit(EXIT_SUCCESS);
+		}
+		break;
+
+	    default:
+		break;
+	    }
+	}
+    }
+}
+
+/* Создает Ximage из файла BMP, так как изображение BMP хранится первернутым
+ * и зеркальным-в цикле это исправляется */
+XImage *CreateImageFromBuffer(Display * dis, unsigned char *buf, int width,  int height)
+{
+    int depth, screen;
+    XImage *img = NULL;
+    int i, j;
+    int numBmpBytes;
+    size_t numImgBytes;
+    int32_t *imgBuf;
+    int ind = 0;
+    int line;
+    int temp;
+    int ih, iw; /* Номера строки и столбца для отражения  */
+    int new_ind; /* Новый индекс */
+
+    screen = DefaultScreen(dis);
+    depth = DefaultDepth(dis, screen);
+    temp = width * 3;
+    line = temp + width % 4; /* Длина строки с учетом выравнивания */
+    numImgBytes = (4 * (width * height));
+    imgBuf = malloc(numImgBytes);
+
+    /* Размер, отведенный на BMP в файле с учетом выравнивания */
+    numBmpBytes = line * height;
+    for (i = 0; i < numBmpBytes; i++) {
+	unsigned int r, g, b;
+
+	/* Пропускаем padding */
+	if (i >= temp && (i % line) >= temp)
+	    continue;
+
+	b = buf[i];
+	i++;
+	g = buf[i];
+	i++;
+	r = buf[i];
+
+
+	/* Вычисляем новый индекс для отражения по вертикали */
+	iw = ind % width;
+	ih = ind / width;
+	new_ind = iw + (height - ih - 1) * width;
+
+	imgBuf[new_ind] = (r | g << 8 | b << 16) << 8;
+	ind++;
+    }
+
+    img = XCreateImage(dis, CopyFromParent, depth, ZPixmap, 0, (char *) imgBuf, width, height, 32, 0);
+    XInitImage(img);
+
+    /* Порядок битов и байтов на PC должен быть таким */
+    img->byte_order = MSBFirst;
+
+    img->bitmap_bit_order = MSBFirst;
+    return img;
+}
