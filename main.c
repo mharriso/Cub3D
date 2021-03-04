@@ -83,6 +83,20 @@ typedef struct s_cube {
 // 	exit(EXIT_FAILURE);
 // }
 
+void		my_mlx_pixel_put(t_img *data, int x, int y, int color)
+{
+    char    *dst;
+
+    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+    *(unsigned int*)dst = color;
+}
+int			my_mlx_pixel_get(t_img *data, int x, int y)
+{
+    char    *dst;
+
+    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+    return (*(unsigned int*)dst);
+}
 void	exit_error(char *s)
 {
 	ft_putstr_fd(RED, FD);
@@ -139,24 +153,65 @@ void	check_args(int argc, char **argv, int *cub3d_mode)
 	*cub3d_mode = RUN_GAME;
 }
 
-void	parse_resolution(t_setting *setting, int *rx, int *ry)
+void	parse_resolution(t_setting *setting, t_cube *cube)
 {
+	int	x;
+	int	y;
 	if(setting->len != 3)
 		exit_error("Wrong resolution format");
-	//mlx_get_screen_size(vars->mlx, &vars->rx, &vars->ry);
+	if(cube->rx != -1 || cube->ry != -1)
+		exit_error("Wrong resolution format. Double definition");
+	mlx_get_screen_size(cube->mlx.mlx, &cube->rx, &cube->ry);
+	x = ft_atoi(setting->words[1]);
+	y = ft_atoi(setting->words[2]);
+	if(x < 1 || y < 1)
+		exit_error("Wrong resolution range");
+	if(x < cube->rx)
+		cube->rx = x;
+	if(y < cube->ry)
+		cube->ry = y;
+}
+t_img	resize(t_img img, void *mlx, int new_x, int new_y)
+{
+	t_img	new_img;
+	int		color;
+	float	a;
+	float	b;
+
+	new_img.img = mlx_new_image(mlx, new_x, new_y);
+	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, &new_img.line_length, &new_img.endian);
+	a = (float)new_x / img.width;
+	b = (float)new_y / img.height;
+	for(int y = 0; y < new_y; y++)
+		for(int x = 0; x < new_x; x++)
+		{
+				color = my_mlx_pixel_get(&img, x/a, y/b);
+				my_mlx_pixel_put(&new_img, x , y, color);
+		}
+	return (new_img);
 }
 
-void	parse_texture(t_setting *setting, t_img img)
+void	parse_texture(void *mlx, t_setting *setting, t_img *img)
 {
 	if(setting->len != 2)
 		exit_error("Wrong texture path format");
 	printf("%s\n", setting->words[1]);
+	if(!(img->img = mlx_xpm_file_to_image(mlx, setting->words[1], &img->width, &img->height)))
+		exit_error("Failed creating mlx image instance from file");
+	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian);
+
 }
 
 int		get_color(char *color)
 {
 	int c;
 
+	while(*color)
+	{
+		if(!(ft_isdigit(*color)))
+			exit_error("Wrong color format");
+		color++;
+	}
 	c = ft_atoi(color);
 	if(c < 0 || c > 255)
 		exit_error("Wrong color range");
@@ -170,35 +225,31 @@ void	parse_color(t_setting *setting, int *color)
 	int		g;
 	int		b;
 
-	// if(setting->words[1] && !(ft_isdigit(setting->words[1][0])))
-	// 	exit_error("Wrong color format");
 	if(!(rgb = ft_split_set(setting->line, SPACE",", &setting->len)))
 		exit_error("Error while creating settings array");
 	if(setting->len != 4)
 		exit_error("Wrong color format");
 	r = get_color(rgb[1]) << 16;
-	b = get_color(rgb[2]) << 8;
-	g = get_color(rgb[3]);
-	*color = r | b | g;
+	g = get_color(rgb[2]) << 8;
+	b = get_color(rgb[3]);
+	*color = r | g | b;
 	free_2d_array(rgb);
 }
 
 void	parse_settings(t_setting *setting, t_cube *cube)
 {
-	if(!(setting->words[0]))
-		return ;
-	else if(!(ft_strcmp("R", setting->words[0])))
-		parse_resolution(setting, &cube->rx, &cube->ry);
+	if(!(ft_strcmp("R", setting->words[0])))
+		parse_resolution(setting, cube);
 	else if(!(ft_strcmp("NO", setting->words[0])))
-		parse_texture(setting, cube->north);
+		parse_texture(cube->mlx.mlx, setting, &cube->north);
 	else if(!(ft_strcmp("SO", setting->words[0])))
-		parse_texture(setting, cube->south);
+		parse_texture(cube->mlx.mlx, setting, &cube->south);
 	else if(!(ft_strcmp("WE", setting->words[0])))
-		parse_texture(setting, cube->west);
+		parse_texture(cube->mlx.mlx, setting, &cube->west);
 	else if(!(ft_strcmp("EA", setting->words[0])))
-		parse_texture(setting, cube->east);
+		parse_texture(cube->mlx.mlx, setting, &cube->east);
 	else if(!(ft_strcmp("S", setting->words[0])))
-		parse_texture(setting, cube->sprite);
+		parse_texture(cube->mlx.mlx, setting, &cube->sprite);
 	else if(!(ft_strcmp("C", setting->words[0])))
 		parse_color(setting, &cube->cellar);
 	else if(!(ft_strcmp("F", setting->words[0])))
@@ -211,6 +262,8 @@ int		get_setting(t_setting *setting, t_cube *cube)
 {
 	if(!(setting->words = ft_split_set(setting->line, SPACE, &setting->len)))
 			exit_error("Error while creating settings array");
+	if(!(setting->words[0]))
+		return (0);
 	parse_settings(setting, cube);
 	free(setting->line);
 	setting->line = NULL;
@@ -277,7 +330,9 @@ void	create_map_lst(char *path, t_list **map, int fd)
 
 void	init_cube(t_cube *cube)
 {
-	//cube->mlx.mlx = mlx_init();
+	if(!(cube->mlx.mlx = mlx_init()))
+		exit_error("Mlx init error");
+	errno = 0;
 	cube->rx = -1;
 	cube->ry = -1;
 	cube->floor = -1;
@@ -291,18 +346,20 @@ int		main(int argc, char **argv)
 	int		fd;
 	t_cube	cube;
 
+	errno = 0;
 	map = NULL;
-
 	check_args(argc, argv, &cub3d_mode);
 
 	if((fd = open(argv[1], O_RDONLY)) == -1)
 		exit_error("Open map file failed");
+
 	init_cube(&cube);
 	get_cub_settings(fd, &cube);
 
-	printf("mlx %s\n", cube.mlx.mlx);
+	//printf("mlx %s\n", cube.mlx.mlx);
 	printf("\ncellar - %06x\n", cube.cellar);
 	printf("\nfloor  - %06x\n", cube.floor);
+	printf("\nrx = %d ry = %d\n", cube.rx, cube.ry);
 	//create_map_lst(argv[1], &map, fd);
 	//ft_lstclear(&map, free);
 	//create_map_arr(&map, ft_lstsize(map));
