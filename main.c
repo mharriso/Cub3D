@@ -61,12 +61,12 @@ typedef struct s_cube {
 	int		ry;
 	int		floor;
 	int		cellar;
-	t_mlx	mlx;
 	t_img	north;
 	t_img	south;
 	t_img	west;
 	t_img	east;
 	t_img	sprite;
+	t_mlx	mlx;
 }				t_cube;
 
 // void	set_resolution(char *r, t_mlx *vars)
@@ -171,6 +171,7 @@ void	parse_resolution(t_setting *setting, t_cube *cube)
 	if(y < cube->ry)
 		cube->ry = y;
 }
+
 t_img	resize(t_img img, void *mlx, int new_x, int new_y)
 {
 	t_img	new_img;
@@ -193,6 +194,8 @@ t_img	resize(t_img img, void *mlx, int new_x, int new_y)
 
 void	parse_texture(void *mlx, t_setting *setting, t_img *img)
 {
+	if(img->img)
+		exit_error("Wrong texture path format. Double definition");
 	if(setting->len != 2)
 		exit_error("Wrong texture path format");
 	printf("%s\n", setting->words[1]);
@@ -225,6 +228,8 @@ void	parse_color(t_setting *setting, int *color)
 	int		g;
 	int		b;
 
+	if(*color != -1)
+		exit_error("Wrong color format. Double definition");
 	if(!(rgb = ft_split_set(setting->line, SPACE",", &setting->len)))
 		exit_error("Error while creating settings array");
 	if(setting->len != 4)
@@ -337,8 +342,26 @@ void	init_cube(t_cube *cube)
 	cube->ry = -1;
 	cube->floor = -1;
 	cube->cellar = -1;
+	cube->north.img = NULL;
+	cube->south.img = NULL;
+	cube->east.img = NULL;
+	cube->west.img = NULL;
+	cube->sprite.img = NULL;
 }
 
+void	check_cube_settings(t_cube *cube)
+{
+	if(cube->rx == -1|| cube->ry == -1)
+		exit_error("Too few arguments in map file.\nMissing resolution");
+	if(cube->cellar == -1 || cube->floor == -1)
+		exit_error("Too few arguments in map file.\nMissing floor or celling color");
+	if(!cube->north.img || !cube->south.img)
+		exit_error("Too few arguments in map file.\nMissing wall texture path");
+	if(!cube->east.img || !cube->west.img)
+		exit_error("Too few arguments in map file.\nMissing wall texture path");
+	if(!cube->sprite.img)
+		exit_error("Too few arguments in map file.\nMissing sprite texture path");
+}
 int		main(int argc, char **argv)
 {
 	t_list	*map;
@@ -355,6 +378,7 @@ int		main(int argc, char **argv)
 
 	init_cube(&cube);
 	get_cub_settings(fd, &cube);
+	check_cube_settings(&cube);
 
 	//printf("mlx %s\n", cube.mlx.mlx);
 	printf("\ncellar - %06x\n", cube.cellar);

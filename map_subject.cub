@@ -1,12 +1,15 @@
 R  1920 999
+R  1920 999
 NO ./ballons.xpm
 SO ./ballons.xpm
 WE ./ballons.xpm
 EA ./ballons.xpm
-S  ./ballons.xpm
 
-F 1, 1a, a1
+
+
 C 1, 1, 1
+F 1, 1, 1
+
 
         1111111111111111111111111
         1000000000110000000000001
