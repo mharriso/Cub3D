@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 19:41:20 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/02 02:50:19 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/04 01:57:45 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,21 @@ static	char	**free_words(char **array)
 	return (NULL);
 }
 
-char			**ft_split_set(char const *s, char *set)
+char			**ft_split_set(char const *s, char *set, size_t *len)
 {
 	char		**res;
-	size_t		len;
 	size_t		word_len;
 	size_t		i;
 	size_t		j;
 
 	if (!s)
 		return (NULL);
-	len = count_words(s, set);
-	if (!(res = (char**)ft_calloc((len + 1), sizeof(char*))))
+	*len = count_words(s, set);
+	if (!(res = (char**)ft_calloc((*len + 1), sizeof(char*))))
 		return (NULL);
 	i = 0;
 	j = -1;
-	while (++j < len)
+	while (++j < *len)
 	{
 		while (ft_strchr(set, s[i]))
 			i++;

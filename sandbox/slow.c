@@ -23,6 +23,22 @@ void	heart(void *mlx_ptr, void *win_ptr, int s_x, int s_y, int color)
 				if(heart[y][x] == '*')
 					mlx_pixel_put(mlx_ptr, win_ptr, x + s_x, y + s_y, color);
 }
+// def	maxOnesAfterRemoveItem(nums):
+// 	maxOnes = 0
+// 	l = len(nums)
+// 	i = 0
+// 	left = 0
+// 	right = 0
+// 	while i < l and nums[i] == 0:
+// 		i += 1
+// 	while i < l:
+// 		zero = 0
+// 		left += nums[i]
+// 		while i < l - 1 and nums[i] == 0:
+// 	return maxOnes
+
+// maxOnes = maxOnesAfterRemoveItem([0, 0, 1, 0, 1,0,1,1,1,1,1, 0])
+// print(maxOnes)
 
 void	big_heart(void *mlx_ptr, void *win_ptr, int s_x, int s_y, int color)
 {

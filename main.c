@@ -33,29 +33,35 @@ enum				e_check_settings
 	C
 };
 
-typedef struct  s_img {
-    void*	img;
-    char*	addr;
-    int		bits_per_pixel;
-    int		line_length;
-    int		endian;
+typedef struct	s_img {
+	void*	img;
+	char*	addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
 	int		height;
 	int		width;
 	int		x;
 	int		y;
-}               t_img;
+}				t_img;
 
-typedef struct  s_mlx {
-    void	*mlx;
-    void	*win;
+typedef struct	s_mlx {
+	void	*mlx;
+	void	*win;
 }				t_mlx;
+
+typedef struct	s_setting {
+	char	*line;
+	char	**words;
+	size_t	len;
+}				t_setting;
 
 typedef struct s_cube {
 	int		rx;
 	int		ry;
 	int		floor;
 	int		cellar;
-	int		check[8];
+	t_mlx	mlx;
 	t_img	north;
 	t_img	south;
 	t_img	west;
@@ -88,7 +94,7 @@ void	exit_error(char *s)
 	exit(EXIT_FAILURE);
 }
 
-static	char	**free_2d_array(char **array)
+char	**free_2d_array(char **array)
 {
 	size_t		i;
 
@@ -112,7 +118,7 @@ int		check_map_type(char *path)
 	return(ft_strcmp(path + (len - 4), ".cub"));
 }
 
-void		check_args(int argc, char **argv, int *cub3d_mode)
+void	check_args(int argc, char **argv, int *cub3d_mode)
 {
 	if (argc < 2)
 		exit_error("Program requires at least one argument (*.cub)");
@@ -132,70 +138,99 @@ void		check_args(int argc, char **argv, int *cub3d_mode)
 	}
 	*cub3d_mode = RUN_GAME;
 }
-void	parse_resolution(char **s, int rx, int ry)
-{
-	printf("%s\n%s\n", s[1], s[2]);
-}
-void	parse_texture(char **s, t_img img)
-{
-	printf("%s\n", s[1]);
-}
-void	parse_color(char **s, char *line, int color)
-{
-	char **RGB;
 
-	if(!(ft_isdigit(s[1][0])))
+void	parse_resolution(t_setting *setting, int *rx, int *ry)
+{
+	if(setting->len != 3)
+		exit_error("Wrong resolution format");
+	//mlx_get_screen_size(vars->mlx, &vars->rx, &vars->ry);
+}
+
+void	parse_texture(t_setting *setting, t_img img)
+{
+	if(setting->len != 2)
+		exit_error("Wrong texture path format");
+	printf("%s\n", setting->words[1]);
+}
+
+int		get_color(char *color)
+{
+	int c;
+
+	c = ft_atoi(color);
+	if(c < 0 || c > 255)
+		exit_error("Wrong color range");
+	return c;
+}
+
+void	parse_color(t_setting *setting, int *color)
+{
+	char	**rgb;
+	int		r;
+	int		g;
+	int		b;
+
+	// if(setting->words[1] && !(ft_isdigit(setting->words[1][0])))
+	// 	exit_error("Wrong color format");
+	if(!(rgb = ft_split_set(setting->line, SPACE",", &setting->len)))
+		exit_error("Error while creating settings array");
+	if(setting->len != 4)
 		exit_error("Wrong color format");
-
-	printf("%s\n%s\n%s\n", s[1], s[2], s[3]);
+	r = get_color(rgb[1]) << 16;
+	b = get_color(rgb[2]) << 8;
+	g = get_color(rgb[3]);
+	*color = r | b | g;
+	free_2d_array(rgb);
 }
-void	parse_settings(char **setting, char *line, t_cube *cube)
+
+void	parse_settings(t_setting *setting, t_cube *cube)
 {
-	if(!(setting[0]))
+	if(!(setting->words[0]))
 		return ;
-	else if(!(ft_strcmp("R", setting[0])))
-		parse_resolution(setting, cube->rx, cube->ry);
-	else if(!(ft_strcmp("NO", setting[0])))
+	else if(!(ft_strcmp("R", setting->words[0])))
+		parse_resolution(setting, &cube->rx, &cube->ry);
+	else if(!(ft_strcmp("NO", setting->words[0])))
 		parse_texture(setting, cube->north);
-	else if(!(ft_strcmp("SO", setting[0])))
+	else if(!(ft_strcmp("SO", setting->words[0])))
 		parse_texture(setting, cube->south);
-	else if(!(ft_strcmp("WE", setting[0])))
+	else if(!(ft_strcmp("WE", setting->words[0])))
 		parse_texture(setting, cube->west);
-	else if(!(ft_strcmp("EA", setting[0])))
+	else if(!(ft_strcmp("EA", setting->words[0])))
 		parse_texture(setting, cube->east);
-	else if(!(ft_strcmp("S", setting[0])))
+	else if(!(ft_strcmp("S", setting->words[0])))
 		parse_texture(setting, cube->sprite);
-	else if(!(ft_strcmp("C", setting[0])))
-		parse_color(setting, line, cube->cellar);
-	else if(!(ft_strcmp("F", setting[0])))
-		parse_color(setting, line, cube->floor);
-	else if(setting[0][0] == '1')
-		printf("%s\n",setting[0]);
+	else if(!(ft_strcmp("C", setting->words[0])))
+		parse_color(setting, &cube->cellar);
+	else if(!(ft_strcmp("F", setting->words[0])))
+		parse_color(setting, &cube->floor);
+	else if(setting->words[0][0] == '1')
+		printf("%s\n",setting->words[0]);
 }
-int	get_setting(char *line, t_cube *cube)
-{
-	char	**setting;
 
-	if(!(setting = ft_split_set(line, SPACE)))
+int		get_setting(t_setting *setting, t_cube *cube)
+{
+	if(!(setting->words = ft_split_set(setting->line, SPACE, &setting->len)))
 			exit_error("Error while creating settings array");
-	parse_settings(setting, line, cube);
-	free(line);
-	line = NULL;
-	free_2d_array(setting);
+	parse_settings(setting, cube);
+	free(setting->line);
+	setting->line = NULL;
+	free_2d_array(setting->words);
 	return (1);
 }
-void		get_cub_settings(int fd, t_cube *cube)
-{
-	char	*line;
-	int		ret;
 
-	line = NULL;
-	while ((ret = get_next_line(fd, &line)) > 0)
-		get_setting(line, cube);
+void	get_cub_settings(int fd, t_cube *cube)
+{
+	int			ret;
+	t_setting	setting;
+
+	setting.line = NULL;
+	while ((ret = get_next_line(fd, &setting.line)) > 0)
+		get_setting(&setting, cube);
 	if(ret == -1)
 		exit_error("Error while reading map file");
-	get_setting(line, cube);
+	get_setting(&setting, cube);
 }
+
 char	**create_map_arr(t_list **head, int size)
 {
 	char	**map;
@@ -217,7 +252,7 @@ char	**create_map_arr(t_list **head, int size)
 	return (map);
 }
 
-void create_map_lst(char *path, t_list **map, int fd)
+void	create_map_lst(char *path, t_list **map, int fd)
 {
 	char	*line;
 	int		ret;
@@ -240,28 +275,37 @@ void create_map_lst(char *path, t_list **map, int fd)
 	//free(line);
 }
 
+void	init_cube(t_cube *cube)
+{
+	//cube->mlx.mlx = mlx_init();
+	cube->rx = -1;
+	cube->ry = -1;
+	cube->floor = -1;
+	cube->cellar = -1;
+}
+
 int		main(int argc, char **argv)
 {
 	t_list	*map;
 	int		cub3d_mode;
 	int		fd;
 	t_cube	cube;
+
 	map = NULL;
 
-	// int a[10] = {};
-	// for(int i = 0; i < 10; i++)
-	// 	printf("%d ", a[i]);
-	// printf("\n");
-
 	check_args(argc, argv, &cub3d_mode);
+
 	if((fd = open(argv[1], O_RDONLY)) == -1)
 		exit_error("Open map file failed");
-	ft_memset(cube.check, 0, sizeof(cube.check));
+	init_cube(&cube);
 	get_cub_settings(fd, &cube);
 
+	printf("mlx %s\n", cube.mlx.mlx);
+	printf("\ncellar - %06x\n", cube.cellar);
+	printf("\nfloor  - %06x\n", cube.floor);
 	//create_map_lst(argv[1], &map, fd);
 	//ft_lstclear(&map, free);
 	//create_map_arr(&map, ft_lstsize(map));
 
-	//sleep(40);
+	//sleep(30);
 }

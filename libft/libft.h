@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 01:34:10 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/02 03:52:44 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/04 02:25:53 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
 void (*del)(void *));
 void			ft_lstiter(t_list *lst, void (*f)(void *));
 int				get_next_line(int fd, char **line);
-char			**ft_split_set(char const *s, char *set);
+char			**ft_split_set(char const *s, char *set, size_t *len);
 int				ft_strcmp(const char *s1, const char *s2);
 
 #endif

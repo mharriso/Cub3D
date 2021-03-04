@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 19:54:07 by mharriso          #+#    #+#             */
-/*   Updated: 2021/02/25 21:50:25 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/04 02:00:38 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int		hello(int keycode, t_vars *vars)
 	dprintf(1, "H E L L O !\n");
 	return 0;
 }
+
 int		bye(int keycode, t_vars *vars)
 {
 	dprintf(1, "B Y E !\n");

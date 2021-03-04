@@ -80,7 +80,6 @@ int			main()
 	vars.rx = 1920;
 	vars.ry = 1080;
 	vars.mlx = mlx_init();
-	//mlx_get_screen_size(vars.mlx, &vars.rx, &vars.ry);
 	vars.win = mlx_new_window(vars.mlx, vars.rx, vars.ry, "PICTURE");
 
 	back.img = mlx_xpm_file_to_image(vars.mlx, "pic/planet3840x2160.xpm", &back.width, &back.height);
