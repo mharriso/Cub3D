@@ -261,6 +261,8 @@ void	parse_settings(t_setting *setting, t_cube *cube)
 		parse_color(setting, &cube->floor);
 	else if(setting->words[0][0] == '1')
 		printf("%s\n",setting->words[0]);
+	else
+		exit_error("Error\nInvalid map file configs");
 }
 
 int		get_setting(t_setting *setting, t_cube *cube)
