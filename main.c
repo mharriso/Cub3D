@@ -153,14 +153,46 @@ void	check_args(int argc, char **argv, int *cub3d_mode)
 	*cub3d_mode = RUN_GAME;
 }
 
+int		check_digits(char *s)
+{
+	while(*s)
+	{
+		if(!(ft_isdigit(*s)))
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
+int		check_commas(char *s)
+{
+	int i;
+
+	i = 0;
+	while(*s)
+	{
+		if(*s == ',')
+			i++;
+		if(i > 2)
+			return (0);
+		s++;
+	}
+	return i == 2 ? 1 : 0;
+}
 void	parse_resolution(t_setting *setting, t_cube *cube)
 {
 	int	x;
 	int	y;
-	if(setting->len != 3)
-		exit_error("Wrong resolution format");
+
 	if(cube->rx != -1 || cube->ry != -1)
 		exit_error("Wrong resolution format. Double definition");
+	if(setting->len != 3)
+		exit_error("Wrong resolution format");
+	printf("%s %s\n",setting->words[1],setting->words[2]);
+	if(!check_digits(setting->words[1]))
+		exit_error("Wrong resolution format");
+	if(!check_digits(setting->words[2]))
+		exit_error("Wrong resolution format");
 	mlx_get_screen_size(cube->mlx.mlx, &cube->rx, &cube->ry);
 	x = ft_atoi(setting->words[1]);
 	y = ft_atoi(setting->words[2]);
@@ -209,12 +241,8 @@ int		get_color(char *color)
 {
 	int c;
 
-	while(*color)
-	{
-		if(!(ft_isdigit(*color)))
-			exit_error("Wrong color format");
-		color++;
-	}
+	if(!check_digits(color))
+		exit_error("Wrong color format");
 	c = ft_atoi(color);
 	if(c < 0 || c > 255)
 		exit_error("Wrong color range");
@@ -230,6 +258,8 @@ void	parse_color(t_setting *setting, int *color)
 
 	if(*color != -1)
 		exit_error("Wrong color format. Double definition");
+	if(!check_commas(setting->line))
+		exit_error("Wrong color format");
 	if(!(rgb = ft_split_set(setting->line, SPACE",", &setting->len)))
 		exit_error("Error while creating settings array");
 	if(setting->len != 4)

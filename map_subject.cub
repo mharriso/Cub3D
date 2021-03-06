@@ -1,14 +1,13 @@
 R  1920 999
-R  1920 999
 NO ./ballons.xpm
 SO ./ballons.xpm
 WE ./ballons.xpm
 EA ./ballons.xpm
+S ./ballons.xpm
 
 
-
-C 1, 1, 1
-F 1, 1, 1
+C ,1, 1, 1,
+F ,1, 1, 1,
 
 
         1111111111111111111111111
