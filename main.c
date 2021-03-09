@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/08 20:22:41 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/09 23:31:24 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@
 #define CYAN    "\033[36m"
 #define WHITE   "\033[37m"
 
-#define SPACE	" \t\v\f\r"
-#define FD			1
-#define RUN_GAME	0
-#define SCREENSHOT	1
+#define SPACE " \t\v\f\r"
+#define FD 1
+#define RUN_GAME 0
+#define SCREENSHOT 1
+#define INNER_OBJS "02NSEW"
 
-enum			e_check_settings
+enum		e_check_settings
 {
 	R,
 	NO,
@@ -72,20 +73,35 @@ typedef struct	s_map
 {
 	char	**map;
 	int		fd;
+	size_t	height;
 }				t_map;
 
-typedef struct s_cube {
+typedef struct	s_player
+{
+	float x;
+	float y;
+}				t_player;
+
+typedef struct	s_config
+{
 	int		rx;
 	int		ry;
 	int		floor;
-	int		cellar;
+	int		ceiling;
 	t_img	north;
 	t_img	south;
 	t_img	west;
 	t_img	east;
 	t_img	sprite;
-	t_mlx	mlx;
-	t_map	map;
+}				t_config;
+
+
+typedef struct	s_cube {
+
+	t_mlx		mlx;
+	t_map		map;
+	t_config	config;
+	t_player	player;
 }				t_cube;
 
 // void	set_resolution(char *r, t_mlx *vars)
@@ -196,13 +212,31 @@ int		check_commas(char *s)
 	}
 	return (i == 2 ? 1 : 0);
 }
-
-void	parse_resolution(t_setting *setting, t_cube *cube)
+void	check_cub_settings(t_cube *cub)
+{
+	if (cub->config.rx == -1 || cub->config.ry == -1)
+		exit_error("Error\nToo few arguments in map file. \
+		\nMissing resolution");
+	if (cub->config.ceiling == -1)
+		exit_error("Error\nToo few arguments in map file. \
+		\nMissing ceiling color");
+	if (cub->config.floor == -1)
+		exit_error("Error\nToo few arguments in map file. \
+		\nMissing floor color");
+	if (!cub->config.north.img || !cub->config.south.img \
+		|| !cub->config.east.img || !cub->config.west.img)
+		exit_error("Error\nToo few arguments in map file. \
+		\nMissing wall texture path");
+	if (!cub->config.sprite.img)
+		exit_error("Error\nToo few arguments in map file. \
+		\nMissing sprite texture path");
+}
+void	parse_resolution(t_setting *setting, t_cube *cub)
 {
 	int	x;
 	int	y;
 
-	if (cube->rx != -1 || cube->ry != -1)
+	if (cub->config.rx != -1 || cub->config.ry != -1)
 		exit_error("Error\nWrong resolution format. Double definition");
 	if (setting->len != 3)
 		exit_error("Error\nWrong resolution format");
@@ -210,15 +244,15 @@ void	parse_resolution(t_setting *setting, t_cube *cube)
 		exit_error("Error\nWrong resolution format");
 	if (!check_digits(setting->words[2]))
 		exit_error("Error\nWrong resolution format");
-	mlx_get_screen_size(cube->mlx.mlx, &cube->rx, &cube->ry);
+	mlx_get_screen_size(cub->mlx.mlx, &cub->config.rx, &cub->config.ry);
 	x = ft_atoi(setting->words[1]);
 	y = ft_atoi(setting->words[2]);
 	if (x < 1 || y < 1)
 		exit_error("Error\nWrong resolution range");
-	if (x < cube->rx)
-		cube->rx = x;
-	if (y < cube->ry)
-		cube->ry = y;
+	if (x < cub->config.rx)
+		cub->config.rx = x;
+	if (y < cub->config.ry)
+		cub->config.ry = y;
 }
 
 t_img	resize(t_img img, void *mlx, int new_x, int new_y)
@@ -311,7 +345,7 @@ char	**create_map_arr(t_list **head, int size)
 	return (map);
 }
 
-void	create_map_lst(char *first_line, t_list **map, int fd)
+void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 {
 	char	*line;
 	int		ret;
@@ -321,56 +355,70 @@ void	create_map_lst(char *first_line, t_list **map, int fd)
 	line = NULL;
 	if (!(elem = ft_lstnew(first_line)))
 		exit_error("Error\nCan not create map list");
-	ft_lstadd_front(map, elem);
-	while ((ret = get_next_line(fd, &line)) > 0)
+	ft_lstadd_front(map_lst, elem);
+	while ((ret = get_next_line(map->fd, &line)) > 0 && ft_strlen(line) > 0)
 	{
 		if (!(elem = ft_lstnew(line)))
 			exit_error("Error\nCan not create map list");
-		ft_lstadd_front(map, elem);
+		ft_lstadd_front(map_lst, elem);
+		map->height++;
 	}
 	if (ret == -1)
 		exit_error("Error\nCan not read map file");
+	if (ret != 0)
+		exit_error("Error\nInvalid map");
 	if (!(elem = ft_lstnew(line)))
 		exit_error("Error\nCan not read map file");
-	ft_lstadd_front(map, elem);
+	ft_lstadd_front(map_lst, elem);
 }
 
-void	get_cube_map(char *first_line, t_map *map)
+void	parse_map(t_map *map)
+{
+	while(1)
+	{
+
+	}
+}
+
+void	get_cub_map(char *first_line, t_map *map)
 {
 	t_list	*map_lst;
 
 	map_lst = NULL;
-	create_map_lst(first_line, &map_lst, map->fd);
+	create_map_lst(first_line, &map_lst, map);
 	map->map = create_map_arr(&map_lst, ft_lstsize(map_lst));
 	ft_lstclear(&map_lst, free);
+	//parse_map(map);
 }
 
-void	parse_settings(t_setting *setting, t_cube *cube)
+void	parse_settings(t_setting *setting, t_cube *cub)
 {
 	if (!(ft_strcmp("R", setting->words[0])))
-		parse_resolution(setting, cube);
+		parse_resolution(setting, cub);
 	else if (!(ft_strcmp("NO", setting->words[0])))
-		parse_texture(cube->mlx.mlx, setting, &cube->north);
+		parse_texture(cub->mlx.mlx, setting, &cub->config.north);
 	else if (!(ft_strcmp("SO", setting->words[0])))
-		parse_texture(cube->mlx.mlx, setting, &cube->south);
+		parse_texture(cub->mlx.mlx, setting, &cub->config.south);
 	else if (!(ft_strcmp("WE", setting->words[0])))
-		parse_texture(cube->mlx.mlx, setting, &cube->west);
+		parse_texture(cub->mlx.mlx, setting, &cub->config.west);
 	else if (!(ft_strcmp("EA", setting->words[0])))
-		parse_texture(cube->mlx.mlx, setting, &cube->east);
+		parse_texture(cub->mlx.mlx, setting, &cub->config.east);
 	else if (!(ft_strcmp("S", setting->words[0])))
-		parse_texture(cube->mlx.mlx, setting, &cube->sprite);
+		parse_texture(cub->mlx.mlx, setting, &cub->config.sprite);
 	else if (!(ft_strcmp("C", setting->words[0])))
-		parse_color(setting, &cube->cellar);
+		parse_color(setting, &cub->config.ceiling);
 	else if (!(ft_strcmp("F", setting->words[0])))
-		parse_color(setting, &cube->floor);
+		parse_color(setting, &cub->config.floor);
 	else if (setting->words[0][0] == '1')
-		get_cube_map(setting->line, &cube->map);
-
+	{
+		check_cub_settings(cub);
+		get_cub_map(setting->line, &cub->map);
+	}
 	else
 		exit_error("Error\nInvalid map file configs");
 }
 
-int		get_setting(t_setting *setting, t_cube *cube)
+int		get_setting(t_setting *setting, t_cube *cub)
 {
 	if (!(setting->words = ft_split_set(setting->line, SPACE, &setting->len)))
 		exit_error("Error\nCan not create settings array");
@@ -380,8 +428,8 @@ int		get_setting(t_setting *setting, t_cube *cube)
 		free_2d_array(setting->words);
 		return (0);
 	}
-	parse_settings(setting, cube);
-	if(!cube->map.map)
+	parse_settings(setting, cub);
+	if (!cub->map.map)
 		free(setting->line);
 	setting->line = NULL;
 	free_2d_array(setting->words);
@@ -389,79 +437,59 @@ int		get_setting(t_setting *setting, t_cube *cube)
 	return (1);
 }
 
-void	get_cub_settings(int fd, t_cube *cube)
+void	get_cub_settings(char *path, t_cube *cub)
 {
 	int			ret;
 	t_setting	setting;
 
+	if ((cub->map.fd = open(path, O_RDONLY)) == -1)
+		exit_error("Error\nOpen map file failed");
 	setting.line = NULL;
-	while ((ret = get_next_line(fd, &setting.line)) > 0)
-		get_setting(&setting, cube);
+	while ((ret = get_next_line(cub->map.fd, &setting.line)) > 0)
+		get_setting(&setting, cub);
 	if (ret == -1)
 		exit_error("Error\nCan not read map file");
-	get_setting(&setting, cube);
+	get_setting(&setting, cub);
 }
 
 
 
-void	init_cube(t_cube *cube)
+void	init_cub(t_cube *cub)
 {
-	if (!(cube->mlx.mlx = mlx_init()))
+	if (!(cub->mlx.mlx = mlx_init()))
 		exit_error("Error\nMlx init error");
 	errno = 0;
-	cube->rx = -1;
-	cube->ry = -1;
-	cube->floor = -1;
-	cube->cellar = -1;
-	cube->north.img = NULL;
-	cube->south.img = NULL;
-	cube->east.img = NULL;
-	cube->west.img = NULL;
-	cube->sprite.img = NULL;
-	cube->map.map = NULL;
+	cub->config.rx = -1;
+	cub->config.ry = -1;
+	cub->config.floor = -1;
+	cub->config.ceiling = -1;
+	cub->config.north.img = NULL;
+	cub->config.south.img = NULL;
+	cub->config.east.img = NULL;
+	cub->config.west.img = NULL;
+	cub->config.sprite.img = NULL;
+	cub->map.map = NULL;
+	cub->map.height = 0;
 }
 
-void	check_cube_settings(t_cube *cube)
-{
-	if (cube->rx == -1|| cube->ry == -1)
-		exit_error("Error\nToo few arguments in map file. \
-		\nMissing resolution");
-	if (cube->cellar == -1 || cube->floor == -1)
-		exit_error("Error\nToo few arguments in map file. \
-		\nMissing floor or celling color");
-	if (!cube->north.img || !cube->south.img)
-		exit_error("Error\nToo few arguments in map file. \
-		\nMissing wall texture path");
-	if (!cube->east.img || !cube->west.img)
-		exit_error("Error\nToo few arguments in map file. \
-		\nMissing wall texture path");
-	if (!cube->sprite.img)
-		exit_error("Error\nToo few arguments in map file. \
-		\nMissing sprite texture path");
-}
+
 int		main(int argc, char **argv)
 {
 	int		cub3d_mode;
-	t_cube	cube;
+	t_cube	cub;
 
 	check_args(argc, argv, &cub3d_mode);
-	init_cube(&cube);
+	init_cub(&cub);
+	get_cub_settings(argv[1], &cub);
 
-	if ((cube.map.fd = open(argv[1], O_RDONLY)) == -1)
-		exit_error("Error\nOpen map file failed");
-
-
-	get_cub_settings(cube.map.fd, &cube);
-	check_cube_settings(&cube);
-
-	//printf("%d %d\n", cube.rx, cube.ry);
-	//printf("mlx %s\n", cube.mlx.mlx);
-	// printf("\ncellar - %06x\n", cube.cellar);
-	// printf("\nfloor  - %06x\n", cube.floor);
-	// printf("\nrx = %d ry = %d\n", cube.rx, cube.ry);
+	//printf("%d %d\n", cub.rx, cub.ry);
+	//printf("mlx %s\n", cub.mlx.mlx);
+	// printf("\nceiling - %06x\n", cub.ceiling);
+	// printf("\nfloor  - %06x\n", cub.floor);
+	// printf("\nrx = %d ry = %d\n", cub.rx, cub.ry);
 	//create_map_lst(argv[1], &map, fd);
 
 	//create_map_arr(&map, ft_lstsize(map));
 
-	sleep(30);
+	//sleep(30);
 }
