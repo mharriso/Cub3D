@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/07 02:43:07 by mharriso          #+#    #+#             */
-/*   Updated: 2020/11/07 02:44:27 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/10 18:41:34 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
 	t_list	*tmp;
 
-	if (!lst || !(*lst) || !del)
+	if (!lst || !(*lst))
 		return ;
 	while (*lst != NULL)
 	{
 		tmp = (*lst)->next;
-		del((*lst)->content);
+		if (del)
+			del((*lst)->content);
 		free(*lst);
 		*lst = tmp;
 	}

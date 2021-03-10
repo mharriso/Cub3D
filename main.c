@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/09 23:31:24 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/10 19:18:19 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@
 #define FD 1
 #define RUN_GAME 0
 #define SCREENSHOT 1
-#define INNER_OBJS "02NSEW"
+#define SPRITE '2'
+#define WALL '1'
+#define PLAYER "WENS"
+#define INNER_OBJS "02WENS"
+#define VALID_OBJS " 012WENS"
 
 enum		e_check_settings
 {
@@ -65,15 +69,17 @@ typedef struct	s_mlx {
 
 typedef struct	s_setting {
 	char	**words;
-	size_t	len;
 	char	*line;
+	size_t	len;
 }				t_setting;
 
 typedef struct	s_map
 {
 	char	**map;
 	int		fd;
+	int		spr_amt;
 	size_t	height;
+	size_t	width;
 }				t_map;
 
 typedef struct	s_player
@@ -341,7 +347,7 @@ char	**create_map_arr(t_list **head, int size)
 	}
 	// i = -1;
 	// while (map[++i])
-	// 	printf("arr = %s\n", map[i]);
+	// 	printf("%2d) %s\n", i, map[i]);
 	return (map);
 }
 
@@ -356,7 +362,7 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 	if (!(elem = ft_lstnew(first_line)))
 		exit_error("Error\nCan not create map list");
 	ft_lstadd_front(map_lst, elem);
-	while ((ret = get_next_line(map->fd, &line)) > 0 && ft_strlen(line) > 0)
+	while ((ret = get_next_line(map->fd, &line)) > 0 && line[0])
 	{
 		if (!(elem = ft_lstnew(line)))
 			exit_error("Error\nCan not create map list");
@@ -366,18 +372,78 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 	if (ret == -1)
 		exit_error("Error\nCan not read map file");
 	if (ret != 0)
-		exit_error("Error\nInvalid map");
+		exit_error("Error\nInvalid map. Extra lines.");
 	if (!(elem = ft_lstnew(line)))
 		exit_error("Error\nCan not read map file");
 	ft_lstadd_front(map_lst, elem);
 }
 
-void	parse_map(t_map *map)
+void	check_border(t_map *map, int x, int y)
 {
-	while(1)
+	if (x == map->width - 1 || y == map->height - 2)
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (x == 0 || y == 0)
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (x > 0 && (map->map)[y][x - 1] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (x < map->width - 1 && (map->map)[y][x + 1] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (y > 0 && (map->map)[y - 1][x] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (y < map->height - 1 && (map->map)[y + 1][x] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+}
+void	check_gaps(t_map map, int x, int y)
+{
+
+}
+void	set_player(t_map *map, char dir, int x, int y)
+{
+	if (dir == 'N')
 	{
 
 	}
+	else if (dir == 'S')
+	{
+
+	}
+	else if (dir == 'E')
+	{
+
+	}
+	else if (dir == 'W')
+	{
+
+	}
+}
+
+void	parse_map(t_map *map)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	printf("height = %zu\n", map->height);
+	while (y < map->height)
+	{
+		x = 0;
+		map->width = ft_strlen(map->map[y]);
+		printf("%d) %s\n", y, map->map[y]);
+		while (x < map->width)
+		{
+			if (!ft_strchr(VALID_OBJS, map->map[y][x]))
+				exit_error("Error\nInvalid map. Invalid object detected!");
+			if (ft_strchr(INNER_OBJS, (map->map)[y][x]))
+				check_border(map, x, y);
+			if (map->map[y][x] == SPRITE)
+				map->spr_amt++;
+			if (ft_strchr(PLAYER, map->map[y][x]))
+				set_player(map, map->map[y][x], x, y);
+			x++;
+		}
+		y++;
+	}
+	printf("sprites = %d\n", map->spr_amt);
 }
 
 void	get_cub_map(char *first_line, t_map *map)
@@ -386,9 +452,10 @@ void	get_cub_map(char *first_line, t_map *map)
 
 	map_lst = NULL;
 	create_map_lst(first_line, &map_lst, map);
-	map->map = create_map_arr(&map_lst, ft_lstsize(map_lst));
-	ft_lstclear(&map_lst, free);
-	//parse_map(map);
+	map->height = ft_lstsize(map_lst);
+	map->map = create_map_arr(&map_lst, map->height);
+	parse_map(map);
+	ft_lstclear(&map_lst, NULL);
 }
 
 void	parse_settings(t_setting *setting, t_cube *cub)
@@ -470,6 +537,7 @@ void	init_cub(t_cube *cub)
 	cub->config.sprite.img = NULL;
 	cub->map.map = NULL;
 	cub->map.height = 0;
+	cub->map.spr_amt = 0;
 }
 
 
