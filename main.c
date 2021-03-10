@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/10 19:18:19 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/10 20:22:19 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@
 #define SPRITE '2'
 #define WALL '1'
 #define PLAYER "WENS"
-#define INNER_OBJS "02WENS"
-#define VALID_OBJS " 012WENS"
+#define INNER_OBJS "02" PLAYER
+#define VALID_OBJS " 012" PLAYER
 
 enum		e_check_settings
 {
@@ -102,13 +102,13 @@ typedef struct	s_config
 }				t_config;
 
 
-typedef struct	s_cube {
+typedef struct	s_cub {
 
 	t_mlx		mlx;
 	t_map		map;
 	t_config	config;
 	t_player	player;
-}				t_cube;
+}				t_cub;
 
 // void	set_resolution(char *r, t_mlx *vars)
 // {
@@ -218,7 +218,7 @@ int		check_commas(char *s)
 	}
 	return (i == 2 ? 1 : 0);
 }
-void	check_cub_settings(t_cube *cub)
+void	check_cub_settings(t_cub *cub)
 {
 	if (cub->config.rx == -1 || cub->config.ry == -1)
 		exit_error("Error\nToo few arguments in map file. \
@@ -237,7 +237,7 @@ void	check_cub_settings(t_cube *cub)
 		exit_error("Error\nToo few arguments in map file. \
 		\nMissing sprite texture path");
 }
-void	parse_resolution(t_setting *setting, t_cube *cub)
+void	parse_resolution(t_setting *setting, t_cub *cub)
 {
 	int	x;
 	int	y;
@@ -373,14 +373,17 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 		exit_error("Error\nCan not read map file");
 	if (ret != 0)
 		exit_error("Error\nInvalid map. Extra lines.");
-	if (!(elem = ft_lstnew(line)))
-		exit_error("Error\nCan not read map file");
-	ft_lstadd_front(map_lst, elem);
+	if (*line)
+	{
+		if (!(elem = ft_lstnew(line)))
+			exit_error("Error\nCan not read map file");
+		ft_lstadd_front(map_lst, elem);
+	}
 }
 
 void	check_border(t_map *map, int x, int y)
 {
-	if (x == map->width - 1 || y == map->height - 2)
+	if (x == map->width - 1 || y == map->height - 1)
 		exit_error("Error\nInvalid map. Gap detected!");
 	if (x == 0 || y == 0)
 		exit_error("Error\nInvalid map. Gap detected!");
@@ -397,8 +400,14 @@ void	check_gaps(t_map map, int x, int y)
 {
 
 }
-void	set_player(t_map *map, char dir, int x, int y)
+void	set_player(t_cub *cub, char dir, int x, int y)
 {
+
+	if (cub->player.x != 0)
+		exit_error("Error\nMany players! Need only one");
+	cub->player.x = x + 0.5;
+	cub->player.y = y + 0.5;
+	cub->map.map[y][x] = '0';
 	if (dir == 'N')
 	{
 
@@ -417,48 +426,48 @@ void	set_player(t_map *map, char dir, int x, int y)
 	}
 }
 
-void	parse_map(t_map *map)
+void	parse_map(t_cub *cub)
 {
 	int	x;
 	int	y;
 
 	y = 0;
-	printf("height = %zu\n", map->height);
-	while (y < map->height)
+	while (y < cub->map.height)
 	{
 		x = 0;
-		map->width = ft_strlen(map->map[y]);
-		printf("%d) %s\n", y, map->map[y]);
-		while (x < map->width)
+		cub->map.width = ft_strlen(cub->map.map[y]);
+		while (x < cub->map.width)
 		{
-			if (!ft_strchr(VALID_OBJS, map->map[y][x]))
+			if (!ft_strchr(VALID_OBJS, cub->map.map[y][x]))
 				exit_error("Error\nInvalid map. Invalid object detected!");
-			if (ft_strchr(INNER_OBJS, (map->map)[y][x]))
-				check_border(map, x, y);
-			if (map->map[y][x] == SPRITE)
-				map->spr_amt++;
-			if (ft_strchr(PLAYER, map->map[y][x]))
-				set_player(map, map->map[y][x], x, y);
+			if (ft_strchr(INNER_OBJS, (cub->map.map)[y][x]))
+				check_border(&cub->map, x, y);
+			if (cub->map.map[y][x] == SPRITE)
+				cub->map.spr_amt++;
+			if (ft_strchr(PLAYER, cub->map.map[y][x]))
+				set_player(cub, cub->map.map[y][x], x, y);
 			x++;
 		}
+		printf("%s\n", cub->map.map[y]);
 		y++;
 	}
-	printf("sprites = %d\n", map->spr_amt);
+	printf("sprites = %d\n", cub->map.spr_amt);
+	printf("player = %f %f\n", cub->player.x, cub->player.y);
 }
 
-void	get_cub_map(char *first_line, t_map *map)
+void	get_cub_map(char *first_line, t_cub *cub)
 {
 	t_list	*map_lst;
 
 	map_lst = NULL;
-	create_map_lst(first_line, &map_lst, map);
-	map->height = ft_lstsize(map_lst);
-	map->map = create_map_arr(&map_lst, map->height);
-	parse_map(map);
+	create_map_lst(first_line, &map_lst, &cub->map);
+	cub->map.height = ft_lstsize(map_lst);
+	cub->map.map = create_map_arr(&map_lst, cub->map.height);
+	parse_map(cub);
 	ft_lstclear(&map_lst, NULL);
 }
 
-void	parse_settings(t_setting *setting, t_cube *cub)
+void	parse_settings(t_setting *setting, t_cub *cub)
 {
 	if (!(ft_strcmp("R", setting->words[0])))
 		parse_resolution(setting, cub);
@@ -479,13 +488,13 @@ void	parse_settings(t_setting *setting, t_cube *cub)
 	else if (setting->words[0][0] == '1')
 	{
 		check_cub_settings(cub);
-		get_cub_map(setting->line, &cub->map);
+		get_cub_map(setting->line, cub);
 	}
 	else
 		exit_error("Error\nInvalid map file configs");
 }
 
-int		get_setting(t_setting *setting, t_cube *cub)
+int		get_setting(t_setting *setting, t_cub *cub)
 {
 	if (!(setting->words = ft_split_set(setting->line, SPACE, &setting->len)))
 		exit_error("Error\nCan not create settings array");
@@ -504,7 +513,7 @@ int		get_setting(t_setting *setting, t_cube *cub)
 	return (1);
 }
 
-void	get_cub_settings(char *path, t_cube *cub)
+void	get_cub_settings(char *path, t_cub *cub)
 {
 	int			ret;
 	t_setting	setting;
@@ -521,7 +530,7 @@ void	get_cub_settings(char *path, t_cube *cub)
 
 
 
-void	init_cub(t_cube *cub)
+void	init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
 		exit_error("Error\nMlx init error");
@@ -538,13 +547,14 @@ void	init_cub(t_cube *cub)
 	cub->map.map = NULL;
 	cub->map.height = 0;
 	cub->map.spr_amt = 0;
+	cub->player.x = 0;
 }
 
 
 int		main(int argc, char **argv)
 {
 	int		cub3d_mode;
-	t_cube	cub;
+	t_cub	cub;
 
 	check_args(argc, argv, &cub3d_mode);
 	init_cub(&cub);
