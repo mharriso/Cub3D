@@ -6,109 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/10 20:22:19 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/11 19:40:18 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <errno.h>
-
-#include "./libft/libft.h"
-
-#define RESET   "\033[0m"
-#define BLACK   "\033[30m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
-
-#define SPACE " \t\v\f\r"
-#define FD 1
-#define RUN_GAME 0
-#define SCREENSHOT 1
-#define SPRITE '2'
-#define WALL '1'
-#define PLAYER "WENS"
-#define INNER_OBJS "02" PLAYER
-#define VALID_OBJS " 012" PLAYER
-
-enum		e_check_settings
-{
-	R,
-	NO,
-	SO,
-	WE,
-	EA,
-	S,
-	F,
-	C
-};
-
-typedef struct	s_img {
-	void*	img;
-	char*	addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-	int		height;
-	int		width;
-	int		x;
-	int		y;
-}				t_img;
-
-typedef struct	s_mlx {
-	void	*mlx;
-	void	*win;
-}				t_mlx;
-
-typedef struct	s_setting {
-	char	**words;
-	char	*line;
-	size_t	len;
-}				t_setting;
-
-typedef struct	s_map
-{
-	char	**map;
-	int		fd;
-	int		spr_amt;
-	size_t	height;
-	size_t	width;
-}				t_map;
-
-typedef struct	s_player
-{
-	float x;
-	float y;
-}				t_player;
-
-typedef struct	s_config
-{
-	int		rx;
-	int		ry;
-	int		floor;
-	int		ceiling;
-	t_img	north;
-	t_img	south;
-	t_img	west;
-	t_img	east;
-	t_img	sprite;
-}				t_config;
-
-
-typedef struct	s_cub {
-
-	t_mlx		mlx;
-	t_map		map;
-	t_config	config;
-	t_player	player;
-}				t_cub;
+#include "cub3d.h"
 
 // void	set_resolution(char *r, t_mlx *vars)
 // {
@@ -163,33 +65,6 @@ char	**free_2d_array(char **array)
 	}
 	free(array);
 	return (NULL);
-}
-
-int		check_map_type(char *path)
-{
-	size_t len;
-
-	len = ft_strlen(path);
-	if (len < 5)
-		exit_error("Error\nWrong map file type. Expect (*.cub)");
-	return (ft_strcmp(path + (len - 4), ".cub"));
-}
-
-void	check_args(int argc, char **argv, int *cub3d_mode)
-{
-	if (argc < 2)
-		exit_error("Error\nProgram requires at least one argument (*.cub)");
-	if (check_map_type(argv[1]))
-		exit_error("Error\nWrong map file type. Expect (*.cub)");
-	if (argc == 3)
-	{
-		if (!(ft_strcmp("--save", argv[2])))
-		{
-			*cub3d_mode = SCREENSHOT;
-			return ;
-		}
-	}
-	*cub3d_mode = RUN_GAME;
 }
 
 int		check_digits(char *s)
@@ -330,143 +205,6 @@ void	parse_color(t_setting *setting, int *color)
 	free_2d_array(rgb);
 }
 
-char	**create_map_arr(t_list **head, int size)
-{
-	char	**map;
-	int		i;
-	t_list	*tmp;
-
-	tmp = *head;
-	if (!(map = malloc((size + 1) * sizeof(char *))))
-		exit_error("Error\nCan not create map array");
-	map[size] = NULL;
-	while (tmp)
-	{
-		map[--size] = tmp->content;
-		tmp = tmp->next;
-	}
-	// i = -1;
-	// while (map[++i])
-	// 	printf("%2d) %s\n", i, map[i]);
-	return (map);
-}
-
-void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
-{
-	char	*line;
-	int		ret;
-	t_list	*elem;
-
-	elem = NULL;
-	line = NULL;
-	if (!(elem = ft_lstnew(first_line)))
-		exit_error("Error\nCan not create map list");
-	ft_lstadd_front(map_lst, elem);
-	while ((ret = get_next_line(map->fd, &line)) > 0 && line[0])
-	{
-		if (!(elem = ft_lstnew(line)))
-			exit_error("Error\nCan not create map list");
-		ft_lstadd_front(map_lst, elem);
-		map->height++;
-	}
-	if (ret == -1)
-		exit_error("Error\nCan not read map file");
-	if (ret != 0)
-		exit_error("Error\nInvalid map. Extra lines.");
-	if (*line)
-	{
-		if (!(elem = ft_lstnew(line)))
-			exit_error("Error\nCan not read map file");
-		ft_lstadd_front(map_lst, elem);
-	}
-}
-
-void	check_border(t_map *map, int x, int y)
-{
-	if (x == map->width - 1 || y == map->height - 1)
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (x == 0 || y == 0)
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (x > 0 && (map->map)[y][x - 1] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (x < map->width - 1 && (map->map)[y][x + 1] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (y > 0 && (map->map)[y - 1][x] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (y < map->height - 1 && (map->map)[y + 1][x] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
-}
-void	check_gaps(t_map map, int x, int y)
-{
-
-}
-void	set_player(t_cub *cub, char dir, int x, int y)
-{
-
-	if (cub->player.x != 0)
-		exit_error("Error\nMany players! Need only one");
-	cub->player.x = x + 0.5;
-	cub->player.y = y + 0.5;
-	cub->map.map[y][x] = '0';
-	if (dir == 'N')
-	{
-
-	}
-	else if (dir == 'S')
-	{
-
-	}
-	else if (dir == 'E')
-	{
-
-	}
-	else if (dir == 'W')
-	{
-
-	}
-}
-
-void	parse_map(t_cub *cub)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < cub->map.height)
-	{
-		x = 0;
-		cub->map.width = ft_strlen(cub->map.map[y]);
-		while (x < cub->map.width)
-		{
-			if (!ft_strchr(VALID_OBJS, cub->map.map[y][x]))
-				exit_error("Error\nInvalid map. Invalid object detected!");
-			if (ft_strchr(INNER_OBJS, (cub->map.map)[y][x]))
-				check_border(&cub->map, x, y);
-			if (cub->map.map[y][x] == SPRITE)
-				cub->map.spr_amt++;
-			if (ft_strchr(PLAYER, cub->map.map[y][x]))
-				set_player(cub, cub->map.map[y][x], x, y);
-			x++;
-		}
-		printf("%s\n", cub->map.map[y]);
-		y++;
-	}
-	printf("sprites = %d\n", cub->map.spr_amt);
-	printf("player = %f %f\n", cub->player.x, cub->player.y);
-}
-
-void	get_cub_map(char *first_line, t_cub *cub)
-{
-	t_list	*map_lst;
-
-	map_lst = NULL;
-	create_map_lst(first_line, &map_lst, &cub->map);
-	cub->map.height = ft_lstsize(map_lst);
-	cub->map.map = create_map_arr(&map_lst, cub->map.height);
-	parse_map(cub);
-	ft_lstclear(&map_lst, NULL);
-}
-
 void	parse_settings(t_setting *setting, t_cub *cub)
 {
 	if (!(ft_strcmp("R", setting->words[0])))
@@ -529,7 +267,6 @@ void	get_cub_settings(char *path, t_cub *cub)
 }
 
 
-
 void	init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
@@ -550,6 +287,32 @@ void	init_cub(t_cub *cub)
 	cub->player.x = 0;
 }
 
+int		check_map_type(char *path)
+{
+	size_t len;
+
+	len = ft_strlen(path);
+	if (len < 5)
+		exit_error("Error\nWrong map file type. Expect (*.cub)");
+	return (ft_strcmp(path + (len - 4), ".cub"));
+}
+
+void	check_args(int argc, char **argv, int *cub3d_mode)
+{
+	if (argc < 2)
+		exit_error("Error\nProgram requires at least one argument (*.cub)");
+	if (check_map_type(argv[1]))
+		exit_error("Error\nWrong map file type. Expect (*.cub)");
+	if (argc == 3)
+	{
+		if (!(ft_strcmp("--save", argv[2])))
+		{
+			*cub3d_mode = SCREENSHOT;
+			return ;
+		}
+	}
+	*cub3d_mode = RUN_GAME;
+}
 
 int		main(int argc, char **argv)
 {
@@ -568,6 +331,6 @@ int		main(int argc, char **argv)
 	//create_map_lst(argv[1], &map, fd);
 
 	//create_map_arr(&map, ft_lstsize(map));
-
-	//sleep(30);
+	close(cub.map.fd);
+	sleep(30);
 }
