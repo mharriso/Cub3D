@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/12 22:22:01 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/13 14:34:34 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,6 @@ char	**create_map_arr(t_list **head, int size)
 		map[--size] = tmp->content;
 		tmp = tmp->next;
 	}
-	// i = -1;
-	// while (map[++i])
-	// 	printf("%2d) %s\n", i, map[i]);
 	return (map);
 }
 

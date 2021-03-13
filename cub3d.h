@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/12 22:02:26 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/13 17:05:31 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,24 +22,44 @@
 #include "./libft/libft.h"
 
 #define RESET   "\033[0m"
-#define BLACK   "\033[30m"
 #define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
+// #define BLACK   "\033[30m"
+// #define GREEN   "\033[32m"
+// #define YELLOW  "\033[33m"
+// #define BLUE    "\033[34m"
+// #define MAGENTA "\033[35m"
+// #define CYAN    "\033[36m"
+// #define WHITE   "\033[37m"
 
-#define SPACE " \t\v\f\r"
-#define FD 1
+#define C_TRANSP  0xFF000000
+#define C_RED     0x00FF0000
+#define C_GREEN   0x0000FF00
+#define C_BLUE    0x000000FF
+#define C_YELLOW  0x00FFFF00
+#define C_CYAN    0x0000FFFF
+#define C_MAGENTA 0x00FF00FF
+#define C_WHITE   0x00FFFFFF
+#define C_T       0x01000000
+#define C_R       0x00010000
+#define C_G       0x00000100
+#define C_B       0x00000001
+
 #define RUN_GAME 0
 #define SCREENSHOT 1
+
+#define SPACE " \t\v\f\r"
+#define FD STDOUT_FILENO
 #define SPRITE '2'
 #define WALL '1'
 #define PLAYER "WENS"
 #define INNER_OBJS "02" PLAYER
 #define VALID_OBJS " 012" PLAYER
+
+#define KEY_ESC 53
+#define KEY_W 13
+#define KEY_A 0
+#define KEY_S 1
+#define KEY_D 2
 
 enum		e_check_settings
 {
@@ -93,6 +113,7 @@ typedef	struct	s_map
 	t_sprite	*sprites;
 	size_t		height;
 	size_t		width;
+	t_img		map2d;
 }				t_map;
 
 typedef struct	s_player
@@ -125,5 +146,6 @@ typedef struct	s_cub
 
 void	exit_error(char *s);
 void	get_cub_map(char *first_line, t_cub *cub);
+void	render_cub(t_cub *cub);
 
 #endif

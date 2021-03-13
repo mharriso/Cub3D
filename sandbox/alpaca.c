@@ -100,8 +100,8 @@ int			main()
 	art.obj = &alpaca;
 	art.vars = &vars;
 
-	mlx_hook(vars.win, 2, 1L<<0, key_handler, &art);
-	mlx_hook(vars.win, 17, 1L<<17, close, &vars);
+	mlx_hook(vars.win, 2, 1L << 0, key_handler, &art);
+	mlx_hook(vars.win, 17, 1L << 17, close, &vars);
 	mlx_loop_hook(vars.mlx, render_next_frame, &art);
 	mlx_loop(vars.mlx);
 }

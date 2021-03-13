@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/11 19:40:18 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/13 17:26:36 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,21 @@
 // 	exit(EXIT_FAILURE);
 // }
 
-void		my_mlx_pixel_put(t_img *data, int x, int y, int color)
-{
-	char	*dst;
+// void		my_mlx_pixel_put(t_img *data, int x, int y, int color)
+// {
+// 	char	*dst;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
-}
+// 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+// 	*(unsigned int*)dst = color;
+// }
 
-int			my_mlx_pixel_get(t_img *data, int x, int y)
-{
-	char	*dst;
+// int			my_mlx_pixel_get(t_img *data, int x, int y)
+// {
+// 	char	*dst;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	return (*(unsigned int*)dst);
-}
+// 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+// 	return (*(unsigned int*)dst);
+// }
 
 void	exit_error(char *s)
 {
@@ -134,27 +134,6 @@ void	parse_resolution(t_setting *setting, t_cub *cub)
 		cub->config.rx = x;
 	if (y < cub->config.ry)
 		cub->config.ry = y;
-}
-
-t_img	resize(t_img img, void *mlx, int new_x, int new_y)
-{
-	t_img	new_img;
-	int		color;
-	float	a;
-	float	b;
-
-	new_img.img = mlx_new_image(mlx, new_x, new_y);
-	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, \
-	&new_img.line_length, &new_img.endian);
-	a = (float)new_x / img.width;
-	b = (float)new_y / img.height;
-	for (int y = 0; y < new_y; y++)
-		for (int x = 0; x < new_x; x++)
-		{
-				color = my_mlx_pixel_get(&img, x / a, y / b);
-				my_mlx_pixel_put(&new_img, x , y, color);
-		}
-	return (new_img);
 }
 
 void	parse_texture(void *mlx, t_setting *setting, t_img *img)
@@ -271,7 +250,6 @@ void	init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
 		exit_error("Error\nMlx init error");
-	errno = 0;
 	cub->config.rx = -1;
 	cub->config.ry = -1;
 	cub->config.floor = -1;
@@ -319,18 +297,11 @@ int		main(int argc, char **argv)
 	int		cub3d_mode;
 	t_cub	cub;
 
+	errno = 0;
 	check_args(argc, argv, &cub3d_mode);
 	init_cub(&cub);
 	get_cub_settings(argv[1], &cub);
-
-	//printf("%d %d\n", cub.rx, cub.ry);
-	//printf("mlx %s\n", cub.mlx.mlx);
-	// printf("\nceiling - %06x\n", cub.ceiling);
-	// printf("\nfloor  - %06x\n", cub.floor);
-	// printf("\nrx = %d ry = %d\n", cub.rx, cub.ry);
-	//create_map_lst(argv[1], &map, fd);
-
-	//create_map_arr(&map, ft_lstsize(map));
+	render_cub(&cub);
 	close(cub.map.fd);
-	sleep(30);
+	//sleep(30);
 }
