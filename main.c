@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/13 17:26:36 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/15 23:40:53 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ void	init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
 		exit_error("Error\nMlx init error");
+	errno = 0;
 	cub->config.rx = -1;
 	cub->config.ry = -1;
 	cub->config.floor = -1;
@@ -261,6 +262,7 @@ void	init_cub(t_cub *cub)
 	cub->config.sprite.img = NULL;
 	cub->map.map = NULL;
 	cub->map.height = 0;
+	cub->map.width = 0;
 	cub->map.spr_amt = 0;
 	cub->player.x = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/13 14:34:34 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/16 00:03:33 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,16 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 {
 	char	*line;
 	int		ret;
+	size_t	len;
 
 	line = NULL;
 	add_new_elem(map_lst, first_line);
 	while ((ret = get_next_line(map->fd, &line)) > 0 && line[0])
 	{
 		add_new_elem(map_lst, line);
+		len = ft_strlen(line);
+		if(len > map->width)
+			map->width = len;
 		map->height++;
 	}
 	if (ret == -1)
@@ -44,19 +48,27 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 		free(line);
 }
 
-char	**create_map_arr(t_list **head, int size)
+char	**create_map_arr(t_list **head, int height, int width)
 {
 	char	**map;
 	int		i;
 	t_list	*tmp;
+	size_t	len;
 
 	tmp = *head;
-	if (!(map = malloc((size + 1) * sizeof(char *))))
+	if (!(map = malloc((height + 1) * sizeof(char *))))
 		exit_error("Error\nCan not create map array");
-	map[size] = NULL;
+	map[height] = NULL;
 	while (tmp)
 	{
-		map[--size] = tmp->content;
+		height--;
+		if(!(map[height] = malloc(width + 1)))
+			exit_error("Error\nCan not create map array");
+		len = ft_strlen(tmp->content);
+		ft_memcpy(map[height], tmp->content, len);
+		while(len < width)
+			map[height][len++] = ' ';
+		map[height][width] = '\0';
 		tmp = tmp->next;
 	}
 	return (map);
@@ -76,9 +88,9 @@ void	check_cross(t_map *map, int x, int y)
 		exit_error("Error\nInvalid map. Gap detected!");
 	if (map->map[y][x + 1] == ' ')
 		exit_error("Error\nInvalid map. Gap detected!");
-	if (map->map[y - 1][x] == ' ')
+	if (map->map[y - 1][x] == ' ' || map->map[y - 1][x] == '\0')
 		exit_error("Error\nInvalid map. Gap detected!");
-	if (map->map[y + 1][x] == ' ')
+	if (map->map[y + 1][x] == ' '|| map->map[y - 1][x] == '\0')
 		exit_error("Error\nInvalid map. Gap detected!");
 }
 
@@ -117,7 +129,6 @@ void	parse_map_1(t_cub *cub)
 	while (y < cub->map.height)
 	{
 		x = 0;
-		cub->map.width = ft_strlen(cub->map.map[y]);
 		while (x < cub->map.width)
 		{
 			if (!ft_strchr(VALID_OBJS, cub->map.map[y][x]))
@@ -135,8 +146,6 @@ void	parse_map_1(t_cub *cub)
 	}
 	if (cub->player.x == 0)
 		exit_error("Error\nMissing player position");
-	printf("sprites = %d\n", cub->map.spr_amt);
-	printf("player = %f %f\n", cub->player.x, cub->player.y);
 }
 
 void	set_sprite(t_sprite **sprite, int x, int y)
@@ -156,7 +165,6 @@ void	parse_map_2(t_map *map)
 	while (y < map->height - 1)
 	{
 		x = 1;
-		map->width = ft_strlen(map->map[y]);
 		while (x < map->width - 1)
 		{
 			if (ft_strchr(INNER_OBJS, (map->map)[y][x]))
@@ -180,9 +188,8 @@ void	get_cub_map(char *first_line, t_cub *cub)
 	map_lst = NULL;
 	create_map_lst(first_line, &map_lst, &cub->map);
 	cub->map.height = ft_lstsize(map_lst);
-	cub->map.map = create_map_arr(&map_lst, cub->map.height);
+	cub->map.map = create_map_arr(&map_lst, cub->map.height, cub->map.width);
 	parse_map_1(cub);
 	parse_map_2(&cub->map);
-	printf("sprites = %d\nx = %f y = %f\n", cub->map.spr_amt , cub->map.sprites[0].x,cub->map.sprites[0].y);
 	ft_lstclear(&map_lst, NULL);
 }

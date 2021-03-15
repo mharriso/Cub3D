@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/13 17:05:31 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/14 19:58:53 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ typedef struct	s_cub
 	t_map		map;
 	t_config	config;
 	t_player	player;
+	t_img		*pl;
 }				t_cub;
 
 void	exit_error(char *s);
