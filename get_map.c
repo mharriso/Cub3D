@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/17 18:59:37 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/18 22:47:05 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,6 @@ void	parse_map_1(t_cub *cub)
 				set_player(cub, cub->map.map[y][x], x, y);
 			x++;
 		}
-		printf("%s$\n", cub->map.map[y]);
 		y++;
 	}
 	if (cub->player.posX == 0)
@@ -184,8 +183,8 @@ void	parse_map_2(t_map *map)
 			}
 			x++;
 		}
-		printf("%s$\n", map->map[y]);
 		y++;
+		printf("2%s$\n", map->map[y]);
 	}
 }
 
@@ -199,5 +198,6 @@ void	get_cub_map(char *first_line, t_cub *cub)
 	cub->map.map = create_map_arr(&map_lst, cub->map.height, cub->map.width);
 	parse_map_1(cub);
 	parse_map_2(&cub->map);
-	ft_lstclear(&map_lst, NULL);
+	//ft_lstclear(&map_lst, NULL);
+	printf("END MAP\n");
 }

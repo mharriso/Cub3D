@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 18:10:11 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/18 19:10:30 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@
 #define KEY_D 2
 #define KEY_LEFT 123
 #define KEY_RIGHT 124
-#define	SCALE 16
+#define	SCALE 1
 #define	FOV 1.1F
 enum		e_check_settings
 {

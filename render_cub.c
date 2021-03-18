@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 18:22:28 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/19 00:05:17 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,38 +58,7 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 // 	return (new_img);
 // }
 int		render_next_frame(t_cub *cub);
-int		key_handler(int keycode, t_cub *cub)
-{
-	int		speed;
-	float	rot;
-	float	x;
-	float	y;
 
-	speed = 2;
-	rot = 0.1;
-
-
-
-	x = cub->player.posX;
-	y = cub->player.posY;
-	if (keycode == KEY_ESC)
-		close_win(&cub->mlx);
-	if (keycode == KEY_W && cub->map.map[(int)(y - speed) / SCALE][(int)x/SCALE] == '0')
-		cub->player.posY -= speed;
-	if (keycode == KEY_S && cub->map.map[(int)(y + speed) / SCALE][(int)x/SCALE] == '0')
-		cub->player.posY += speed;
-	if (keycode == KEY_A && cub->map.map[(int)y/SCALE][(int)(x - speed)/SCALE] == '0')
-		cub->player.posX -= speed;
-	if (keycode == KEY_D && cub->map.map[(int)y/SCALE][(int)(x + speed)/SCALE] == '0')
-		cub->player.posX += speed;
-	if (keycode == KEY_LEFT)
-		cub->player.angle -= rot;
-	if (keycode == KEY_RIGHT)
-		cub->player.angle += rot;
-	//printf("key %d\n", keycode);
-	draw_2dmap(cub);
-	return (0);
-}
 
 float	ray_cast(t_cub *cub, float a)
 {
@@ -100,13 +69,11 @@ float	ray_cast(t_cub *cub, float a)
 	c = 0;
 	x = cub->player.posX + c * cos(a);
 	y = cub->player.posY + c * sin(a);
-	//printf("pos %f %f\n", cub->player.posX, cub->player.posY);
-	while(cub->map.map[(int)y/SCALE][(int)x/SCALE] != '1')
+	while(cub->map.map[(int)y][(int)x] != '1')
 	{
 		x = cub->player.posX + c * cos(a);
 		y = cub->player.posY + c * sin(a);
 		c += 0.05F;
-		my_mlx_pixel_put(&cub->map.map2d, x, y, C_YELLOW);
 	}
 	return (c);
 }
@@ -114,17 +81,44 @@ float	ray_cast(t_cub *cub, float a)
 void	ray_loop(t_cub *cub)
 {
 	int		x;
+	int		y;
 	float	a;
 	float	step;
+	int		wall_d;
 	int		wall_y;
+	int		wall_start;
+	int		wall_end;
 
 	x = 0;
 	a = cub->player.angle - FOV / 2;
 	step = FOV / cub->config.rx;
 	while(x < cub->config.rx)
 	{
-		wall_y = ray_cast(cub, a);
-		wa
+		y = 0;
+		wall_d = ray_cast(cub, a);
+		if(wall_d)
+			wall_y = cub->config.ry / (wall_d * cos(a - cub->player.angle));
+		else
+			wall_y = cub->config.ry;
+		//column_height = win_h/(t*cos(angle-player_a));
+		wall_start = cub->config.ry / 2 - wall_y / 2;
+		wall_end = cub->config.ry - wall_start;
+		printf("wall_d = %d wall_y = %d  s %d e %d\n", wall_d, wall_y, wall_start, wall_end);
+		while(y < wall_start)
+		{
+			my_mlx_pixel_put(&cub->map.map2d, x, y, cub->config.ceiling);
+			y++;
+		}
+		while(y < wall_end)
+		{
+			my_mlx_pixel_put(&cub->map.map2d, x, y, C_MAGENTA);
+			y++;
+		}
+		while(y < cub->config.ry)
+		{
+			my_mlx_pixel_put(&cub->map.map2d, x, y, cub->config.floor);
+			y++;
+		}
 		a += step;
 		x++;
 	}
@@ -167,8 +161,45 @@ void	draw_2dmap(t_cub *cub)
 int		render_next_frame(t_cub *cub)
 {
 	//mlx_clear_window(cub->mlx.mlx, cub->mlx.win);
-	draw_2dmap(cub);
-	my_mlx_pixel_put(&cub->map.map2d, cub->player.posX, cub->player.posY, C_RED);
+	ray_loop(cub);
+	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, cub->map.map2d.img, 0, 0);
+	return (0);
+}
+
+int		key_handler(int keycode, t_cub *cub)
+{
+	float	speed;
+	float	rot;
+	int		x;
+	int		y;
+
+	speed = 0.5;
+	rot = 0.1;
+
+	x = cub->player.posX;
+	y = cub->player.posY;
+	if (keycode == KEY_ESC)
+		close_win(&cub->mlx);
+	// if (keycode == KEY_W && cub->map.map[(int)(y - speed)][x] == '0')
+	// {
+	// 	cub->player.posY += speed * sin(cub->player.angle);
+	// 	cub->player.posX += speed * cos(cub->player.angle);
+	// }
+	if (keycode == KEY_W && cub->map.map[(int)(y - speed)][x] == '0')
+		cub->player.posY -= speed;
+	if (keycode == KEY_S && cub->map.map[(int)(y + speed)][x] == '0')
+		cub->player.posY += speed;
+	if (keycode == KEY_A && cub->map.map[y][(int)(x - speed)] == '0')
+		cub->player.posX -= speed;
+	if (keycode == KEY_D && cub->map.map[y][(int)(x + speed)] == '0')
+		cub->player.posX += speed;
+	if (keycode == KEY_LEFT)
+		cub->player.angle -= rot;
+	if (keycode == KEY_RIGHT)
+		cub->player.angle += rot;
+	//printf("key %d\n", keycode);
+	//draw_2dmap(cub);
+	ray_loop(cub);
 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, cub->map.map2d.img, 0, 0);
 	return (0);
 }
@@ -182,12 +213,10 @@ void	render_cub(t_cub *cub)
 	&cub->map.map2d.bits_per_pixel, &cub->map.map2d.line_length, &cub->map.map2d.endian)))
 		exit_error("Error\nFailed");
 
-	cub->player.posX *= SCALE;
-	cub->player.posY *= SCALE;
-	draw_2dmap(cub);
+	// cub->player.posX *= SCALE;
+	// cub->player.posY *= SCALE;
+	//draw_2dmap(cub);
 	//draw_player(cub);
-
-
 
 	mlx_hook(cub->mlx.win, 2, 1L << 0, key_handler, cub);
 	mlx_hook(cub->mlx.win, 17, 1L << 17, close_win, &cub->mlx);

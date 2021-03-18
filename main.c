@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 18:19:33 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/18 22:11:41 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,6 @@ int		get_setting(t_setting *setting, t_cub *cub)
 		free(setting->line);
 	setting->line = NULL;
 	free_2d_array(setting->words);
-
 	return (1);
 }
 
@@ -300,12 +299,13 @@ int		main(int argc, char **argv)
 {
 	int		cub3d_mode;
 	t_cub	cub;
-s
+
 	errno = 0;
 	init_cub(&cub);
 	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
+	printf("END\n");
 	render_cub(&cub);
-	close(cub.map.fd);
+	//close(cub.map.fd);
 	//sleep(30);
 }
