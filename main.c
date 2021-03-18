@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/15 23:40:53 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/18 18:19:33 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,9 @@ void	parse_resolution(t_setting *setting, t_cub *cub)
 		exit_error("Error\nWrong resolution format");
 	if (!check_digits(setting->words[2]))
 		exit_error("Error\nWrong resolution format");
-	mlx_get_screen_size(cub->mlx.mlx, &cub->config.rx, &cub->config.ry);
+	//mlx_get_screen_size(cub->mlx.mlx, &cub->config.rx, &cub->config.ry);
+	cub->config.rx = 2400;
+	cub->config.ry = 1600;
 	x = ft_atoi(setting->words[1]);
 	y = ft_atoi(setting->words[2]);
 	if (x < 1 || y < 1)
@@ -264,7 +266,7 @@ void	init_cub(t_cub *cub)
 	cub->map.height = 0;
 	cub->map.width = 0;
 	cub->map.spr_amt = 0;
-	cub->player.x = 0;
+	cub->player.posX = 0;
 }
 
 int		check_map_type(char *path)
@@ -298,10 +300,10 @@ int		main(int argc, char **argv)
 {
 	int		cub3d_mode;
 	t_cub	cub;
-
+s
 	errno = 0;
-	check_args(argc, argv, &cub3d_mode);
 	init_cub(&cub);
+	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
 	render_cub(&cub);
 	close(cub.map.fd);

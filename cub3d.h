@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/14 19:58:53 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/18 18:10:11 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <math.h>
 
 #include "./libft/libft.h"
 
@@ -39,6 +40,7 @@
 #define C_CYAN    0x0000FFFF
 #define C_MAGENTA 0x00FF00FF
 #define C_WHITE   0x00FFFFFF
+#define C_BLACK   0x00000000
 #define C_T       0x01000000
 #define C_R       0x00010000
 #define C_G       0x00000100
@@ -52,15 +54,18 @@
 #define SPRITE '2'
 #define WALL '1'
 #define PLAYER "WENS"
-#define INNER_OBJS "02" PLAYER
-#define VALID_OBJS " 012" PLAYER
+#define INNER_OBJS "02WENS"
+#define VALID_OBJS " 012WENS"
 
 #define KEY_ESC 53
 #define KEY_W 13
 #define KEY_A 0
 #define KEY_S 1
 #define KEY_D 2
-
+#define KEY_LEFT 123
+#define KEY_RIGHT 124
+#define	SCALE 16
+#define	FOV 1.1F
 enum		e_check_settings
 {
 	R,
@@ -114,12 +119,18 @@ typedef	struct	s_map
 	size_t		height;
 	size_t		width;
 	t_img		map2d;
+
 }				t_map;
 
 typedef struct	s_player
 {
-	float x;
-	float y;
+	float posX;
+	float posY;
+	float dirX;
+	float dirY;
+	float planeX;
+	float planeY;
+	float angle;
 }				t_player;
 
 typedef struct	s_config
@@ -142,7 +153,6 @@ typedef struct	s_cub
 	t_map		map;
 	t_config	config;
 	t_player	player;
-	t_img		*pl;
 }				t_cub;
 
 void	exit_error(char *s);

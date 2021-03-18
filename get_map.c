@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/16 00:03:33 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/17 18:59:37 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,47 +77,50 @@ char	**create_map_arr(t_list **head, int height, int width)
 void	check_border(t_map *map, int x, int y)
 {
 	if (x == map->width - 1 || y == map->height - 1)
-		exit_error("Error\nInvalid map. Gap detected!");
+		exit_error("Error\nInvalid map. 11Gap detected!");
 	if (x == 0 || y == 0)
-		exit_error("Error\nInvalid map. Gap detected!");
+		exit_error("Error\nInvalid map. 12Gap detected!");
 }
 
 void	check_cross(t_map *map, int x, int y)
 {
 	if (map->map[y][x - 1] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
+		exit_error("Error\nInvalid map. 21Gap detected!");
 	if (map->map[y][x + 1] == ' ')
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (map->map[y - 1][x] == ' ' || map->map[y - 1][x] == '\0')
-		exit_error("Error\nInvalid map. Gap detected!");
-	if (map->map[y + 1][x] == ' '|| map->map[y - 1][x] == '\0')
-		exit_error("Error\nInvalid map. Gap detected!");
+		exit_error("Error\nInvalid map. 22Gap detected!");
+	if (map->map[y - 1][x] == ' ')
+	{
+		printf("error %d %d\n", x,y);
+		exit_error("Error\nInvalid map. 23Gap detected!");
+	}
+	if (map->map[y + 1][x] == ' ')
+		exit_error("Error\nInvalid map. 24Gap detected!");
 }
 
 void	set_player(t_cub *cub, char dir, int x, int y)
 {
 
-	if (cub->player.x != 0)
+	if (cub->player.posX != 0)
 		exit_error("Error\nMany players! Need only one");
-	cub->player.x = x + 0.5;
-	cub->player.y = y + 0.5;
+	cub->player.posX = x + 0.5;
+	cub->player.posY = y + 0.5;
 	cub->map.map[y][x] = '0';
-	// if (dir == 'N')
-	// {
-
-	// }
-	// else if (dir == 'S')
-	// {
-
-	// }
-	// else if (dir == 'E')
-	// {
-
-	// }
-	// else if (dir == 'W')
-	// {
-
-	// }
+	if (dir == 'N')
+	{
+		cub->player.angle = -M_PI_2;
+	}
+	else if (dir == 'S')
+	{
+		cub->player.angle = M_PI_2;
+	}
+	else if (dir == 'E')
+	{
+		cub->player.angle = 0;
+	}
+	else if (dir == 'W')
+	{
+		cub->player.angle = M_PI;
+	}
 }
 
 void	parse_map_1(t_cub *cub)
@@ -141,16 +144,19 @@ void	parse_map_1(t_cub *cub)
 				set_player(cub, cub->map.map[y][x], x, y);
 			x++;
 		}
-		printf("%s\n", cub->map.map[y]);
+		printf("%s$\n", cub->map.map[y]);
 		y++;
 	}
-	if (cub->player.x == 0)
+	if (cub->player.posX == 0)
 		exit_error("Error\nMissing player position");
 }
 
-void	set_sprite(t_sprite **sprite, int x, int y)
+void	set_sprite(t_map *map, int x, int y)
 {
-
+	--map->spr_amt;
+	map->sprites[map->spr_amt].x = x;
+	map->sprites[map->spr_amt].y = y;
+	map->map[y][x] = '0';
 }
 
 void	parse_map_2(t_map *map)
@@ -174,9 +180,11 @@ void	parse_map_2(t_map *map)
 				--map->spr_amt;
 				map->sprites[map->spr_amt].x = x;
 				map->sprites[map->spr_amt].y = y;
+				map->map[y][x] = '0';
 			}
 			x++;
 		}
+		printf("%s$\n", map->map[y]);
 		y++;
 	}
 }
