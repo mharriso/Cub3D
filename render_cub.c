@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/20 21:58:00 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/20 22:14:29 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,26 +39,26 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-// t_img	resize(t_img img, void *mlx, int new_x, int new_y)
-// {
-// 	t_img	new_img;
-// 	int		color;
-// 	float	a;
-// 	float	b;
+t_img	resize(t_img img, void *mlx, int new_x, int new_y)
+{
+	t_img	new_img;
+	int		color;
+	float	a;
+	float	b;
 
-// 	new_img.img = mlx_new_image(mlx, new_x, new_y);
-// 	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, \
-// 	&new_img.line_length, &new_img.endian);
-// 	a = (float)new_x / img.width;
-// 	b = (float)new_y / img.height;
-// 	for (int y = 0; y < new_y; y++)
-// 		for (int x = 0; x < new_x; x++)
-// 		{
-// 				color = my_mlx_pixel_get(&img, x / a, y / b);
-// 				my_mlx_pixel_put(&new_img, x , y, color);
-// 		}
-// 	return (new_img);
-// }
+	new_img.img = mlx_new_image(mlx, new_x, new_y);
+	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, \
+	&new_img.line_length, &new_img.endian);
+	a = (float)new_x / img.width;
+	b = (float)new_y / img.height; //new_y = wall_height
+	for (int y = 0; y < new_y; y++)
+		for (int x = 0; x < new_x; x++)
+		{
+				color = my_mlx_pixel_get(&img, x / a, y / b);
+				my_mlx_pixel_put(&new_img, x , y, color);
+		}
+	return (new_img);
+}
 
 
 // void	draw_2dmap(t_cub *cub)
@@ -121,6 +121,7 @@ float	ray_cast(t_cub *cub, float a)
 			if(a > M_PI_2 && a < 3 * M_PI_2)
 				cub->map.wall_type = WEST;
 			break ;
+			/* int color = my_mlx_pixel_get(&texture, (y - (int)y) * width_texture, y_ray_loop / b */
 		}
 
 		y = cub->player.pos_y + c * sin(a);
@@ -130,6 +131,9 @@ float	ray_cast(t_cub *cub, float a)
 				cub->map.wall_type = SOUTH;
 			if(a < M_PI)
 				cub->map.wall_type = NORTH;
+			// b = wall_height / texture_height
+			/* int color = my_mlx_pixel_get(&texture, (x - (int)x) * width_texture, y_ray_loop / b */
+
 			break ;
 		}
 
