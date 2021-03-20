@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 19:10:30 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/20 21:32:27 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,12 @@
 #define KEY_LEFT 123
 #define KEY_RIGHT 124
 #define	SCALE 1
-#define	FOV 1.1F
+#define	FOV 1.0F
+
+#define	NORTH 1
+#define SOUTH 2
+#define EAST 3
+#define WEST 4
 enum		e_check_settings
 {
 	R,
@@ -119,15 +124,16 @@ typedef	struct	s_map
 	size_t		height;
 	size_t		width;
 	t_img		map2d;
+	int			wall_type;
 
 }				t_map;
 
 typedef struct	s_player
 {
-	float posX;
-	float posY;
-	float dirX;
-	float dirY;
+	float pos_x;
+	float pos_y;
+	float dir_x;
+	float dir_y;
 	float planeX;
 	float planeY;
 	float angle;

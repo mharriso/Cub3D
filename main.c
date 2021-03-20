@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 22:11:41 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/20 17:44:06 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void	init_cub(t_cub *cub)
 	cub->map.height = 0;
 	cub->map.width = 0;
 	cub->map.spr_amt = 0;
-	cub->player.posX = 0;
+	cub->player.pos_x = 0;
 }
 
 int		check_map_type(char *path)
@@ -307,5 +307,5 @@ int		main(int argc, char **argv)
 	printf("END\n");
 	render_cub(&cub);
 	//close(cub.map.fd);
-	//sleep(30);
+	sleep(30);
 }

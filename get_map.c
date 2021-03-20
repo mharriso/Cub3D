@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/18 22:47:05 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/20 17:58:25 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,29 +85,29 @@ void	check_border(t_map *map, int x, int y)
 void	check_cross(t_map *map, int x, int y)
 {
 	if (map->map[y][x - 1] == ' ')
-		exit_error("Error\nInvalid map. 21Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 	if (map->map[y][x + 1] == ' ')
-		exit_error("Error\nInvalid map. 22Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 	if (map->map[y - 1][x] == ' ')
 	{
 		printf("error %d %d\n", x,y);
-		exit_error("Error\nInvalid map. 23Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 	}
 	if (map->map[y + 1][x] == ' ')
-		exit_error("Error\nInvalid map. 24Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 }
 
 void	set_player(t_cub *cub, char dir, int x, int y)
 {
 
-	if (cub->player.posX != 0)
+	if (cub->player.pos_x != 0)
 		exit_error("Error\nMany players! Need only one");
-	cub->player.posX = x + 0.5;
-	cub->player.posY = y + 0.5;
+	cub->player.pos_x = x + 0.5;
+	cub->player.pos_y = y + 0.5;
 	cub->map.map[y][x] = '0';
 	if (dir == 'N')
 	{
-		cub->player.angle = -M_PI_2;
+		cub->player.angle = 3 * M_PI_2;
 	}
 	else if (dir == 'S')
 	{
@@ -146,7 +146,7 @@ void	parse_map_1(t_cub *cub)
 		}
 		y++;
 	}
-	if (cub->player.posX == 0)
+	if (cub->player.pos_x == 0)
 		exit_error("Error\nMissing player position");
 }
 
@@ -184,7 +184,7 @@ void	parse_map_2(t_map *map)
 			x++;
 		}
 		y++;
-		printf("2%s$\n", map->map[y]);
+		//printf("2%s$\n", map->map[y]);
 	}
 }
 
@@ -198,6 +198,6 @@ void	get_cub_map(char *first_line, t_cub *cub)
 	cub->map.map = create_map_arr(&map_lst, cub->map.height, cub->map.width);
 	parse_map_1(cub);
 	parse_map_2(&cub->map);
-	//ft_lstclear(&map_lst, NULL);
+	ft_lstclear(&map_lst, free);
 	printf("END MAP\n");
 }
