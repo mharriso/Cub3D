@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/20 21:32:27 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/21 19:53:47 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,9 @@ typedef	struct	s_map
 	size_t		width;
 	t_img		map2d;
 	int			wall_type;
+	int			wall_height;
+	float		ray_x;
+	float		ray_y;
 
 }				t_map;
 
@@ -132,10 +135,6 @@ typedef struct	s_player
 {
 	float pos_x;
 	float pos_y;
-	float dir_x;
-	float dir_y;
-	float planeX;
-	float planeY;
 	float angle;
 }				t_player;
 

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/20 17:58:25 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/21 17:52:04 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,11 @@ void	set_player(t_cub *cub, char dir, int x, int y)
 	cub->map.map[y][x] = '0';
 	if (dir == 'N')
 	{
-		cub->player.angle = 3 * M_PI_2;
+		cub->player.angle = M_PI_2;
 	}
 	else if (dir == 'S')
 	{
-		cub->player.angle = M_PI_2;
+		cub->player.angle = 3 * M_PI_2;
 	}
 	else if (dir == 'E')
 	{
