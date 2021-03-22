@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/21 17:52:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/22 23:18:16 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char	**create_map_arr(t_list **head, int height, int width)
 	while (tmp)
 	{
 		height--;
-		if(!(map[height] = malloc(width + 1)))
+		if (!(map[height] = malloc(width + 1)))
 			exit_error("Error\nCan not create map array");
 		len = ft_strlen(tmp->content);
 		ft_memcpy(map[height], tmp->content, len);
@@ -107,11 +107,11 @@ void	set_player(t_cub *cub, char dir, int x, int y)
 	cub->map.map[y][x] = '0';
 	if (dir == 'N')
 	{
-		cub->player.angle = M_PI_2;
+		cub->player.angle = 3 * M_PI_2;
 	}
 	else if (dir == 'S')
 	{
-		cub->player.angle = 3 * M_PI_2;
+		cub->player.angle = M_PI_2;
 	}
 	else if (dir == 'E')
 	{
@@ -150,23 +150,24 @@ void	parse_map_1(t_cub *cub)
 		exit_error("Error\nMissing player position");
 }
 
-void	set_sprite(t_map *map, int x, int y)
+void	set_sprite(t_map *map, int x, int y, int i)
 {
-	--map->spr_amt;
-	map->sprites[map->spr_amt].x = x;
-	map->sprites[map->spr_amt].y = y;
-	map->map[y][x] = '0';
+	map->sprites[i].x = x + 0.5;
+	map->sprites[i].y = y + 0.5;
 }
 
 void	parse_map_2(t_map *map)
 {
 	int	x;
 	int	y;
+	int	i;
+
 
 	if (map->spr_amt)
 		if (!(map->sprites = malloc(map->spr_amt + 1 * sizeof(t_sprite))))
 			exit_error("Error\nCan not create sprites array");
 	y = 1;
+	i = map->spr_amt;
 	while (y < map->height - 1)
 	{
 		x = 1;
@@ -175,16 +176,11 @@ void	parse_map_2(t_map *map)
 			if (ft_strchr(INNER_OBJS, (map->map)[y][x]))
 				check_cross(map, x, y);
 			if (map->map[y][x] == SPRITE)
-			{
-				--map->spr_amt;
-				map->sprites[map->spr_amt].x = x;
-				map->sprites[map->spr_amt].y = y;
-				map->map[y][x] = '0';
-			}
+				set_sprite(map, x, y, --i);
 			x++;
 		}
 		y++;
-		//printf("2%s$\n", map->map[y]);
+		//printf("x = %f y = %f$\n", map->sprites[0].x,map->sprites[0].y);
 	}
 }
 

@@ -1,0 +1,18 @@
+R 800 600
+NO texture/ice-1_1.xpm
+SO texture/ballons.xpm
+WE texture/fire_stone_1.xpm
+EA texture/alpaca_portret.xpm
+S  texture/ballons.xpm
+
+C 230,255,255
+F 0,0,0
+
+111111111
+1000021
+1000001
+1000001
+1000001
+100N001
+1000001
+111111111

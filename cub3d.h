@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/21 19:53:47 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 01:01:15 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@
 #define KEY_D 2
 #define KEY_LEFT 123
 #define KEY_RIGHT 124
-#define	SCALE 1
+#define	ROT 0.1F
+#define	SPEED 0.5F
 #define	FOV 1.0F
 
 #define	NORTH 1
@@ -123,9 +124,13 @@ typedef	struct	s_map
 	t_sprite	*sprites;
 	size_t		height;
 	size_t		width;
-	t_img		map2d;
+	t_img		cub3d;
 	int			wall_type;
+	int			wall_start;
+	int			wall_end;
 	int			wall_height;
+	int			put_x;
+	int			put_y;
 	float		ray_x;
 	float		ray_y;
 

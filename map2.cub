@@ -1,14 +1,14 @@
 R 1000 800
-NO field_960_540.xpm
-SO Alpy-660x330.xpm
-WE alpaca_portret.xpm
-EA alpaca_4.xpm
-S  ./ballons.xpm
+NO texture/fire_b_r.xpm
+SO texture/fire_b_r1.xpm
+WE texture/fire_b_r2.xpm
+EA texture/fire_b_r3.xpm
+S  texture/ballons.xpm
 
-C 230,255,255
-F 0,0,0
-                   1111111
-                  110000011
+C 200,100,100
+F 30,0,0
+                  111111111
+                 11100000111
                  10000000001
         11111111110000000001111111111
         11000000110000000001100000011
@@ -34,5 +34,5 @@ F 0,0,0
         11000000110000000001100000011
         11111111110000000001111111111
                  10000000001
-                  110000011
-                   1111111
+                 11100000111
+                  111111111
