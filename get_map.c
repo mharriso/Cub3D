@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 21:01:16 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 23:07:35 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 	{
 		add_new_elem(map_lst, line);
 		len = ft_strlen(line);
-		if(len > map->width)
+		if (len > map->width)
 			map->width = len;
 		map->height++;
 	}
@@ -66,7 +66,7 @@ char	**create_map_arr(t_list **head, int height, int width)
 			exit_error("Error\nCan not create map array");
 		len = ft_strlen(tmp->content);
 		ft_memcpy(map[height], tmp->content, len);
-		while(len < width)
+		while (len < width)
 			map[height][len++] = ' ';
 		map[height][width] = '\0';
 		tmp = tmp->next;
@@ -77,9 +77,9 @@ char	**create_map_arr(t_list **head, int height, int width)
 void	check_border(t_map *map, int x, int y)
 {
 	if (x == map->width - 1 || y == map->height - 1)
-		exit_error("Error\nInvalid map. 11Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 	if (x == 0 || y == 0)
-		exit_error("Error\nInvalid map. 12Gap detected!");
+		exit_error("Error\nInvalid map. Gap detected!");
 }
 
 void	check_cross(t_map *map, int x, int y)
@@ -89,38 +89,26 @@ void	check_cross(t_map *map, int x, int y)
 	if (map->map[y][x + 1] == ' ')
 		exit_error("Error\nInvalid map. Gap detected!");
 	if (map->map[y - 1][x] == ' ')
-	{
-		printf("error %d %d\n", x,y);
 		exit_error("Error\nInvalid map. Gap detected!");
-	}
 	if (map->map[y + 1][x] == ' ')
 		exit_error("Error\nInvalid map. Gap detected!");
 }
 
 void	set_player(t_cub *cub, char dir, int x, int y)
 {
-
 	if (cub->player.pos_x != 0)
 		exit_error("Error\nMany players! Need only one");
 	cub->player.pos_x = x + 0.5;
 	cub->player.pos_y = y + 0.5;
 	cub->map.map[y][x] = '0';
 	if (dir == 'N')
-	{
 		cub->player.angle = 3 * M_PI_2;
-	}
 	else if (dir == 'S')
-	{
 		cub->player.angle = M_PI_2;
-	}
 	else if (dir == 'E')
-	{
 		cub->player.angle = 0;
-	}
 	else if (dir == 'W')
-	{
 		cub->player.angle = M_PI;
-	}
 }
 
 void	parse_map_1(t_cub *cub)
@@ -162,7 +150,6 @@ void	parse_map_2(t_map *map)
 	int	y;
 	int	i;
 
-
 	if (map->spr_amt)
 		if (!(map->sprites = malloc(map->spr_amt * sizeof(t_sprite))))
 			exit_error("Error\nCan not create sprites array");
@@ -180,7 +167,6 @@ void	parse_map_2(t_map *map)
 			x++;
 		}
 		y++;
-		//printf("x = %f y = %f$\n", map->sprites[0].x,map->sprites[0].y);
 	}
 }
 
@@ -195,5 +181,4 @@ void	get_cub_map(char *first_line, t_cub *cub)
 	parse_map_1(cub);
 	parse_map_2(&cub->map);
 	ft_lstclear(&map_lst, free);
-	printf("END MAP\n");
 }

@@ -1,5 +1,5 @@
 R 800 600
-NO texture/fire_b_r.xpm
+NO texture/ballons.xpm
 SO texture/fire_b_r1.xpm
 WE texture/fire_b_r2.xpm
 EA texture/fire_b_r3.xpm
@@ -9,10 +9,10 @@ C 200,100,100
 F 30,0,0
 
 111111111
-1000201
-1200001
-1002201
-1000001
-100N001
-1020001
+100000021
+120000001
+100000001
+100000021
+100N00001
+102000001
 111111111

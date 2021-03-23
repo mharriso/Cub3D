@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 22:30:56 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/24 00:48:17 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@ void	check_angle(float *i);
 int		render_next_frame(t_cub *cub);
 void	draw_2dmap(t_cub *cub);
 void	render_sprite(t_cub *cub, int i);
-void sort_arr(t_sprite *arr, int n);
+void	sort_arr(t_sprite *arr, int n);
 void	print_sprites(t_sprite *s, int size);
-
 
 int		close_win(t_mlx *mlx)
 {
@@ -38,64 +37,10 @@ int		my_mlx_pixel_get(t_img *data, int x, int y)
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 {
 	char	*dst;
-	//printf("pixel x = %d y = %d\n", x,y);
+
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
-
-// t_img	resize(t_img img, void *mlx, int new_x, int new_y)
-// {
-// 	t_img	new_img;
-// 	int		color;
-// 	float	a;
-// 	float	b;
-
-// 	new_img.img = mlx_new_image(mlx, new_x, new_y);
-// 	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, \
-// 	&new_img.line_length, &new_img.endian);
-// 	a = (float)new_x / img.width;
-// 	b = (float)new_y / img.height; //new_y = wall_height
-// 	for (int y = 0; y < new_y; y++)
-// 		for (int x = 0; x < new_x; x++)
-// 		{
-// 				color = my_mlx_pixel_get(&img, x / a, y / b);
-// 				my_mlx_pixel_put(&new_img, x , y, color);
-// 		}
-// 	return (new_img);
-// }
-
-
-// void	draw_2dmap(t_cub *cub)
-// {
-// 	int	x;
-// 	int	y;
-
-// 	y = 0;
-// 	while (y < cub->map.height * SCALE)
-// 	{
-// 		x = 0;
-// 		while (x < ft_strlen(cub->map.map[y/SCALE]) * SCALE)
-// 		{
-// 			if (cub->map.map[(int)(y/SCALE)][(int)(x/SCALE)] == '1')
-// 				my_mlx_pixel_put(&cub->map.cub3d, x, y, C_MAGENTA);
-// 			if (cub->map.map[(int)(y/SCALE)][(int)(x/SCALE)] == '0')
-// 				my_mlx_pixel_put(&cub->map.cub3d, x, y, C_BLUE);
-// 			x++;
-// 		}
-// 		y++;
-// 	}
-// 	//printf("pos %f %f\n", cub->player.pos_x, cub->player.pos_y);
-// 	my_mlx_pixel_put(&cub->map.cub3d, cub->player.pos_x, cub->player.pos_y, C_BLUE);
-// 	ray_loop(cub);
-// 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, cub->map.cub3d.img, 0, 0);
-// }
-
-// void	draw_player(t_cub *cub)
-// {
-// 	my_mlx_pixel_put(&cub->map.cub3d, cub->player.pos_x, cub->player.pos_y, C_BLUE);
-
-// }
-
 
 // int		render_next_frame(t_cub *cub)
 // {
@@ -107,13 +52,12 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 
 void	ray_cast(t_cub *cub, float a)
 {
-	check_angle(&a);
-	cub->wall.dst= 0;
-	cub->wall.ray_x = cub->player.pos_x + cub->wall.dst* cos(a);
-	cub->wall.ray_y = cub->player.pos_y + cub->wall.dst* sin(a);
+	cub->wall.dst = 0;
+	cub->wall.ray_x = cub->player.pos_x + cub->wall.dst * cos(a);
+	cub->wall.ray_y = cub->player.pos_y + cub->wall.dst * sin(a);
 	while (1)
 	{
-		cub->wall.ray_x = cub->player.pos_x + cub->wall.dst* cos(a);
+		cub->wall.ray_x = cub->player.pos_x + cub->wall.dst * cos(a);
 		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1')
 		{
 			if (a < M_PI_2 || a > 3 * M_PI_2)
@@ -122,7 +66,7 @@ void	ray_cast(t_cub *cub, float a)
 				cub->wall.type = WEST;
 			break ;
 		}
-		cub->wall.ray_y = cub->player.pos_y + cub->wall.dst* sin(a);
+		cub->wall.ray_y = cub->player.pos_y + cub->wall.dst * sin(a);
 		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1')
 		{
 			if (a > M_PI)
@@ -131,50 +75,53 @@ void	ray_cast(t_cub *cub, float a)
 				cub->wall.type = SOUTH;
 			break ;
 		}
-		cub->wall.dst+= 0.01F;
+		cub->wall.dst += 0.01F;
 	}
+	cub->wall.rays[cub->wall.put_x] = cub->wall.dst;
 }
 
-void	put_texture(t_cub *cub, t_img *texture, int get_x)
+void	put_texture(t_cub *cub, t_img *texture, float k)
 {
-	int get_y;
-	int color;
-	float d;
+	int		get_y;
+	int		get_x;
+	int		color;
+	float	d;
 
 	d = (float)cub->wall.height / (float)texture->height;
+	get_x = k * texture->width;
 	get_y = (cub->wall.put_y - cub->wall.start) / d;
-
 	color = my_mlx_pixel_get(texture, get_x, get_y);
 	my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, color);
 }
 
 void	render_wall(t_cub *cub)
 {
-	while (cub->wall.put_y < cub->wall.start )
+	while (cub->wall.put_y < cub->wall.start)
 	{
-		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, cub->config.ceiling);
+		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, \
+			cub->wall.put_y, cub->config.ceiling);
 		cub->wall.put_y++;
 	}
-	float k_x = (cub->wall.ray_x - (int)cub->wall.ray_x);
-	float k_y = (cub->wall.ray_y - (int)cub->wall.ray_y);
 	while (cub->wall.put_y < cub->wall.end && cub->wall.put_y < cub->config.ry)
 	{
 		if (cub->wall.type == NORTH)
-			put_texture(cub, &cub->config.north, k_x * cub->config.north.width);
+			put_texture(cub, &cub->config.north, cub->wall.k_x);
 		else if (cub->wall.type == SOUTH)
-			put_texture(cub, &cub->config.south, k_x * cub->config.south.width);
+			put_texture(cub, &cub->config.south, cub->wall.k_x);
 		else if (cub->wall.type == EAST)
-			put_texture(cub, &cub->config.east, k_y * cub->config.east.width);
+			put_texture(cub, &cub->config.east, cub->wall.k_y);
 		else if (cub->wall.type == WEST)
-			put_texture(cub, &cub->config.west, k_y * cub->config.west.width);
+			put_texture(cub, &cub->config.west, cub->wall.k_y);
 		cub->wall.put_y++;
 	}
 	while (cub->wall.put_y < cub->config.ry)
 	{
-		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, cub->config.floor);
+		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, \
+		cub->wall.put_y, cub->config.floor);
 		cub->wall.put_y++;
 	}
 }
+
 void	print_sprites(t_sprite *s, int size)
 {
 	for(int i = 0; i<size;i++)
@@ -182,57 +129,64 @@ void	print_sprites(t_sprite *s, int size)
 		printf("x = %f y = %f d = %f\n", s[i].x, s[i].y, s[i].dst);
 	}
 }
+
 void	render_sprites(t_cub *cub)
 {
 	int	i;
 
 	i = 0;
-	while(i < cub->map.spr_amt)
+	while (i < cub->map.spr_amt)
 	{
-		cub->map.sprites[i].dst = pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2);
+		cub->map.sprites[i].dst = pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + \
+		pow(cub->player.pos_y - cub->map.sprites[i].y, 2);
 		i++;
 	}
-	// print_sprites(cub->map.sprites, cub->map.spr_amt);
+	print_sprites(cub->map.sprites, cub->map.spr_amt);
 	sort_arr(cub->map.sprites, cub->map.spr_amt);
-	// printf("\n\n");
-	// print_sprites(cub->map.sprites, cub->map.spr_amt);
+	printf("\n\n");
+	print_sprites(cub->map.sprites, cub->map.spr_amt);
 	i = 0;
-	while(i < cub->map.spr_amt)
+	while (i < cub->map.spr_amt)
 	{
 		render_sprite(cub, i);
 		i++;
 	}
 }
+
+void	get_wall_height(t_cub *cub, float a)
+{
+	if (cub->wall.dst > 0)
+		cub->wall.height = cub->config.ry / (cub->wall.dst * \
+		cos(a - cub->player.angle));
+	else
+		cub->wall.height = cub->config.ry;
+	cub->wall.start = cub->config.ry / 2 - cub->wall.height / 2;
+	cub->wall.end = cub->config.ry - cub->wall.start;
+	cub->wall.k_x = (cub->wall.ray_x - (int)cub->wall.ray_x);
+	cub->wall.k_y = (cub->wall.ray_y - (int)cub->wall.ray_y);
+}
+
 void	ray_loop(t_cub *cub)
 {
 	float	a;
 	float	step;
-	float	k_y;
-	float	k_x;
 
 	cub->wall.put_x = 0;
 	a = cub->player.angle - FOV / 2;
 	step = FOV / cub->config.rx;
 	while (cub->wall.put_x < cub->config.rx)
 	{
-
 		cub->wall.put_y = 0;
 		ray_cast(cub, a);
-		cub->wall.rays[cub->wall.put_x] = cub->wall.dst;
-		if (cub->wall.dst > 0)
-			cub->wall.height = cub->config.ry / (cub->wall.dst * cos(a - cub->player.angle));
-		else
-			cub->wall.height = cub->config.ry;
-		cub->wall.start = cub->config.ry / 2 - cub->wall.height / 2;
-		cub->wall.end = cub->config.ry - cub->wall.start;
+		get_wall_height(cub, a);
 		render_wall(cub);
 		a += step;
 		cub->wall.put_x++;
 	}
 	if (cub->map.spr_amt)
 		render_sprites(cub);
-
 }
+
 void	swap_sprite(t_sprite *a, t_sprite *b)
 {
 		t_sprite tmp;
@@ -247,30 +201,33 @@ void	swap_sprite(t_sprite *a, t_sprite *b)
 		b->x = tmp.x;
 		b->y = tmp.y;
 }
+
 void	sort_arr(t_sprite *arr, int n)
 {
-    int		max;
+	int		max;
 	int		index;
-	int		tmp;
-	int		flag;
+	int		i;
+	int		j;
 
-    for(int i = 0; i < n; i++)
-    {
-        max = arr[i].dst;
-        flag = 0;
-        for(int j = i+1; j < n; j++)
-        {
-            if (arr[j].dst > max)
+	i = -1;
+	while (++i < n)
+	{
+		max = arr[i].dst;
+		index = -1;
+		j = i;
+		while (++j < n)
+		{
+			if (arr[j].dst > max)
 			{
-                max = arr[j].dst;
+				max = arr[j].dst;
 				index = j;
-				flag = 1;
 			}
-        }
-        if (flag)
+		}
+		if (index != -1)
 			swap_sprite(&(arr[i]), &(arr[index]));
-    }
+	}
 }
+
 void	render_sprite(t_cub *cub, int i)
 {
 	int		x;
@@ -383,10 +340,13 @@ void	check_angle(float *a)
 void	render_cub(t_cub *cub)
 {
 	cub->wall.rays = malloc(cub->config.rx * sizeof(float));
-	cub->mlx.win = mlx_new_window(cub->mlx.mlx, cub->config.rx, cub->config.ry, "CUB3D");
-	cub->map.cub3d.img = mlx_new_image(cub->mlx.mlx, cub->config.rx, cub->config.ry);
-	if (!(cub->map.cub3d.addr = mlx_get_data_addr(cub->map.cub3d.img, &cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, &cub->map.cub3d.endian)))
-		exit_error("Error\nFailed");
+	if (!(cub->mlx.win = mlx_new_window(cub->mlx.mlx, cub->config.rx, \
+		cub->config.ry, "CUB3D")))
+		exit_error("Error\nFailed creating mlx window");
+	if (!(cub->map.cub3d.img = mlx_new_image(cub->mlx.mlx, cub->config.rx, \
+		cub->config.ry)))
+		exit_error("Error\nFailed creating mlx image");
+	cub->map.cub3d.addr = mlx_get_data_addr(cub->map.cub3d.img, &cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, &cub->map.cub3d.endian);
 	ray_loop(cub);
 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, cub->map.cub3d.img, 0, 0);
 	mlx_hook(cub->mlx.win, 2, 1L << 0, key_handler, cub);

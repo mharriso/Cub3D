@@ -6,41 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 21:30:47 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 23:51:33 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-// void	set_resolution(char *r, t_mlx *vars)
-// {
-
-// 	mlx_get_screen_size(vars->mlx, &vars->rx, &vars->ry);
-
-// }
-
-// void	exit_perror(const char *s)
-// {
-// 	printf("%d\n", errno);
-// 	perror(s);
-// 	exit(EXIT_FAILURE);
-// }
-
-// void		my_mlx_pixel_put(t_img *data, int x, int y, int color)
-// {
-// 	char	*dst;
-
-// 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-// 	*(unsigned int*)dst = color;
-// }
-
-// int			my_mlx_pixel_get(t_img *data, int x, int y)
-// {
-// 	char	*dst;
-
-// 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-// 	return (*(unsigned int*)dst);
-// }
 
 void	exit_error(char *s)
 {
@@ -93,6 +63,7 @@ int		check_commas(char *s)
 	}
 	return (i == 2 ? 1 : 0);
 }
+
 void	check_cub_settings(t_cub *cub)
 {
 	if (cub->config.rx == -1 || cub->config.ry == -1)
@@ -112,6 +83,7 @@ void	check_cub_settings(t_cub *cub)
 		exit_error("Error\nToo few arguments in map file. \
 		\nMissing sprite texture path");
 }
+
 void	parse_resolution(t_setting *setting, t_cub *cub)
 {
 	int	x;
@@ -144,7 +116,6 @@ void	parse_texture(void *mlx, t_setting *setting, t_img *img)
 		exit_error("Error\nWrong texture path format. Double definition");
 	if (setting->len != 2)
 		exit_error("Error\nWrong texture path format");
-	//printf("%s\n", setting->words[1]);
 	if (!(img->img = mlx_xpm_file_to_image(mlx, setting->words[1], \
 	&img->width, &img->height)))
 		exit_error("Error\nFailed creating mlx image instance from file");
@@ -247,7 +218,6 @@ void	get_cub_settings(char *path, t_cub *cub)
 	close(cub->map.fd);
 }
 
-
 void	init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
@@ -306,6 +276,5 @@ int		main(int argc, char **argv)
 	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
 	render_cub(&cub);
-
-	sleep(30);
+	//sleep(30);
 }
