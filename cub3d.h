@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 19:18:00 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 21:49:44 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,8 @@ typedef	struct s_wall
 	int			height;
 	int			put_x;
 	int			put_y;
+	float		dst;
+	float		*rays;
 	float		ray_x;
 	float		ray_y;
 }	t_wall;

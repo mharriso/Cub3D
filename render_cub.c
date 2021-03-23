@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 21:02:01 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 22:30:56 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,18 +105,16 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 // 	return (0);
 // }
 
-float	ray_cast(t_cub *cub, float a)
+void	ray_cast(t_cub *cub, float a)
 {
-	float c;
-
-	c = 0;
 	check_angle(&a);
-	cub->wall.ray_x = cub->player.pos_x + c * cos(a);
-	cub->wall.ray_y = cub->player.pos_y + c * sin(a);
+	cub->wall.dst= 0;
+	cub->wall.ray_x = cub->player.pos_x + cub->wall.dst* cos(a);
+	cub->wall.ray_y = cub->player.pos_y + cub->wall.dst* sin(a);
 	while (1)
 	{
-		cub->wall.ray_x = cub->player.pos_x + c * cos(a);
-		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1') // E W
+		cub->wall.ray_x = cub->player.pos_x + cub->wall.dst* cos(a);
+		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1')
 		{
 			if (a < M_PI_2 || a > 3 * M_PI_2)
 				cub->wall.type = EAST;
@@ -124,8 +122,8 @@ float	ray_cast(t_cub *cub, float a)
 				cub->wall.type = WEST;
 			break ;
 		}
-		cub->wall.ray_y = cub->player.pos_y + c * sin(a);
-		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1') // S N
+		cub->wall.ray_y = cub->player.pos_y + cub->wall.dst* sin(a);
+		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1')
 		{
 			if (a > M_PI)
 				cub->wall.type = NORTH;
@@ -133,9 +131,8 @@ float	ray_cast(t_cub *cub, float a)
 				cub->wall.type = SOUTH;
 			break ;
 		}
-		c += 0.01F;
+		cub->wall.dst+= 0.01F;
 	}
-	return (c);
 }
 
 void	put_texture(t_cub *cub, t_img *texture, int get_x)
@@ -146,6 +143,7 @@ void	put_texture(t_cub *cub, t_img *texture, int get_x)
 
 	d = (float)cub->wall.height / (float)texture->height;
 	get_y = (cub->wall.put_y - cub->wall.start) / d;
+
 	color = my_mlx_pixel_get(texture, get_x, get_y);
 	my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, color);
 }
@@ -194,10 +192,10 @@ void	render_sprites(t_cub *cub)
 		cub->map.sprites[i].dst = pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2);
 		i++;
 	}
-	print_sprites(cub->map.sprites, cub->map.spr_amt);
+	// print_sprites(cub->map.sprites, cub->map.spr_amt);
 	sort_arr(cub->map.sprites, cub->map.spr_amt);
-	printf("\n\n");
-	print_sprites(cub->map.sprites, cub->map.spr_amt);
+	// printf("\n\n");
+	// print_sprites(cub->map.sprites, cub->map.spr_amt);
 	i = 0;
 	while(i < cub->map.spr_amt)
 	{
@@ -209,7 +207,6 @@ void	ray_loop(t_cub *cub)
 {
 	float	a;
 	float	step;
-	float	wall_d;
 	float	k_y;
 	float	k_x;
 
@@ -218,10 +215,12 @@ void	ray_loop(t_cub *cub)
 	step = FOV / cub->config.rx;
 	while (cub->wall.put_x < cub->config.rx)
 	{
+
 		cub->wall.put_y = 0;
-		wall_d = ray_cast(cub, a);
-		if (wall_d > 0)
-			cub->wall.height = cub->config.ry / (wall_d * cos(a - cub->player.angle));
+		ray_cast(cub, a);
+		cub->wall.rays[cub->wall.put_x] = cub->wall.dst;
+		if (cub->wall.dst > 0)
+			cub->wall.height = cub->config.ry / (cub->wall.dst * cos(a - cub->player.angle));
 		else
 			cub->wall.height = cub->config.ry;
 		cub->wall.start = cub->config.ry / 2 - cub->wall.height / 2;
@@ -248,7 +247,7 @@ void	swap_sprite(t_sprite *a, t_sprite *b)
 		b->x = tmp.x;
 		b->y = tmp.y;
 }
-void sort_arr(t_sprite *arr, int n)
+void	sort_arr(t_sprite *arr, int n)
 {
     int		max;
 	int		index;
@@ -274,34 +273,38 @@ void sort_arr(t_sprite *arr, int n)
 }
 void	render_sprite(t_cub *cub, int i)
 {
-	float sprite_dir = atan2(cub->map.sprites[i].y - cub->player.pos_y, cub->map.sprites[i].x - cub->player.pos_x);
+	int		x;
+	int		y;
+	int		x_start;
+	int		y_start;
+	int		sprite_screen_size;
+	float	sprite_dir;
+	float	sprite_dst;
 
 
-    while (sprite_dir - cub->player.angle >  M_PI)
-		sprite_dir -= 2*M_PI;
-    while (sprite_dir - cub->player.angle < -M_PI)
-		sprite_dir += 2*M_PI;
-
-	printf("sprite dir = %f\n", sprite_dir - cub->player.angle);
+	sprite_dir = atan2(cub->map.sprites[i].y - cub->player.pos_y, cub->map.sprites[i].x - cub->player.pos_x);
+	while (sprite_dir - cub->player.angle >  M_PI)
+		sprite_dir -= 2 * M_PI;
+	while (sprite_dir - cub->player.angle < -M_PI)
+		sprite_dir += 2 * M_PI;
 	if (sprite_dir - cub->player.angle < -M_PI_2 || sprite_dir - cub->player.angle > M_PI_2)
 		return;
 
-    //float sprite_dist = sqrt(cub->map.sprites[i].dst);
-	float sprite_dist = sqrt(pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2));
-    int sprite_screen_size = (int)(cub->config.ry/sprite_dist);
+	sprite_dst = sqrt(cub->map.sprites[i].dst);
+	sprite_screen_size = (int)(cub->config.ry/sprite_dst);
 
-	int x_start = -cos(sprite_dir - cub->player.angle + M_PI_2) * cub->config.rx + cub->config.rx/2 - sprite_screen_size / 2;
+	x_start = -cos(sprite_dir - cub->player.angle + M_PI_2) * cub->config.rx + cub->config.rx/2 - sprite_screen_size / 2;
+	y_start = cub->config.ry/2 - sprite_screen_size/2;
 
-    int y_start = cub->config.ry/2 - sprite_screen_size/2;
-	int x = x_start;
+	x = x_start;
 	while(x < sprite_screen_size + x_start )
 	{
-		if (x < 0 || x >= cub->config.rx)
+		if (x < 0 || x >= cub->config.rx || cub->wall.rays[x] < sprite_dst)
 		{
 			x++;
 			continue;
 		}
-		int y = y_start;
+		y = y_start;
 		while (y < sprite_screen_size + y_start)
 		{
 			if (y < 0 || y >= cub->config.ry)
@@ -379,7 +382,7 @@ void	check_angle(float *a)
 
 void	render_cub(t_cub *cub)
 {
-
+	cub->wall.rays = malloc(cub->config.rx * sizeof(float));
 	cub->mlx.win = mlx_new_window(cub->mlx.mlx, cub->config.rx, cub->config.ry, "CUB3D");
 	cub->map.cub3d.img = mlx_new_image(cub->mlx.mlx, cub->config.rx, cub->config.ry);
 	if (!(cub->map.cub3d.addr = mlx_get_data_addr(cub->map.cub3d.img, &cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, &cub->map.cub3d.endian)))

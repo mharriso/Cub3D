@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/22 23:24:17 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 21:30:47 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,7 @@ void	get_cub_settings(char *path, t_cub *cub)
 	if (ret == -1)
 		exit_error("Error\nCan not read map file");
 	get_setting(&setting, cub);
+	close(cub->map.fd);
 }
 
 
@@ -304,8 +305,7 @@ int		main(int argc, char **argv)
 	init_cub(&cub);
 	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
-	printf("END\n");
 	render_cub(&cub);
-	//close(cub.map.fd);
+
 	sleep(30);
 }
