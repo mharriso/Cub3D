@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 01:02:10 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 21:02:01 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	check_angle(float *i);
 int		render_next_frame(t_cub *cub);
 void	draw_2dmap(t_cub *cub);
 void	render_sprite(t_cub *cub, int i);
+void sort_arr(t_sprite *arr, int n);
+void	print_sprites(t_sprite *s, int size);
 
 
 int		close_win(t_mlx *mlx)
@@ -109,26 +111,26 @@ float	ray_cast(t_cub *cub, float a)
 
 	c = 0;
 	check_angle(&a);
-	cub->map.ray_x = cub->player.pos_x + c * cos(a);
-	cub->map.ray_y = cub->player.pos_y + c * sin(a);
+	cub->wall.ray_x = cub->player.pos_x + c * cos(a);
+	cub->wall.ray_y = cub->player.pos_y + c * sin(a);
 	while (1)
 	{
-		cub->map.ray_x = cub->player.pos_x + c * cos(a);
-		if (cub->map.map[(int)cub->map.ray_y][(int)cub->map.ray_x] == '1') // E W
+		cub->wall.ray_x = cub->player.pos_x + c * cos(a);
+		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1') // E W
 		{
 			if (a < M_PI_2 || a > 3 * M_PI_2)
-				cub->map.wall_type = EAST;
+				cub->wall.type = EAST;
 			else if (a > M_PI_2 && a < 3 * M_PI_2)
-				cub->map.wall_type = WEST;
+				cub->wall.type = WEST;
 			break ;
 		}
-		cub->map.ray_y = cub->player.pos_y + c * sin(a);
-		if (cub->map.map[(int)cub->map.ray_y][(int)cub->map.ray_x] == '1') // S N
+		cub->wall.ray_y = cub->player.pos_y + c * sin(a);
+		if (cub->map.map[(int)cub->wall.ray_y][(int)cub->wall.ray_x] == '1') // S N
 		{
 			if (a > M_PI)
-				cub->map.wall_type = NORTH;
+				cub->wall.type = NORTH;
 			else if (a < M_PI)
-				cub->map.wall_type = SOUTH;
+				cub->wall.type = SOUTH;
 			break ;
 		}
 		c += 0.01F;
@@ -142,37 +144,65 @@ void	put_texture(t_cub *cub, t_img *texture, int get_x)
 	int color;
 	float d;
 
-	d = (float)cub->map.wall_height / (float)texture->height;
-	get_y = (cub->map.put_y - cub->map.wall_start) / d;
+	d = (float)cub->wall.height / (float)texture->height;
+	get_y = (cub->wall.put_y - cub->wall.start) / d;
 	color = my_mlx_pixel_get(texture, get_x, get_y);
-	my_mlx_pixel_put(&cub->map.cub3d, cub->map.put_x, cub->map.put_y, color);
+	my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, color);
 }
 
 void	render_wall(t_cub *cub)
 {
-	while (cub->map.put_y < cub->map.wall_start )
+	while (cub->wall.put_y < cub->wall.start )
 	{
-		my_mlx_pixel_put(&cub->map.cub3d, cub->map.put_x, cub->map.put_y, cub->config.ceiling);
-		cub->map.put_y++;
+		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, cub->config.ceiling);
+		cub->wall.put_y++;
 	}
-	float k_x = (cub->map.ray_x - (int)cub->map.ray_x);
-	float k_y = (cub->map.ray_y - (int)cub->map.ray_y);
-	while (cub->map.put_y < cub->map.wall_end && cub->map.put_y < cub->config.ry)
+	float k_x = (cub->wall.ray_x - (int)cub->wall.ray_x);
+	float k_y = (cub->wall.ray_y - (int)cub->wall.ray_y);
+	while (cub->wall.put_y < cub->wall.end && cub->wall.put_y < cub->config.ry)
 	{
-		if (cub->map.wall_type == NORTH)
+		if (cub->wall.type == NORTH)
 			put_texture(cub, &cub->config.north, k_x * cub->config.north.width);
-		else if (cub->map.wall_type == SOUTH)
+		else if (cub->wall.type == SOUTH)
 			put_texture(cub, &cub->config.south, k_x * cub->config.south.width);
-		else if (cub->map.wall_type == EAST)
+		else if (cub->wall.type == EAST)
 			put_texture(cub, &cub->config.east, k_y * cub->config.east.width);
-		else if (cub->map.wall_type == WEST)
+		else if (cub->wall.type == WEST)
 			put_texture(cub, &cub->config.west, k_y * cub->config.west.width);
-		cub->map.put_y++;
+		cub->wall.put_y++;
 	}
-	while (cub->map.put_y < cub->config.ry)
+	while (cub->wall.put_y < cub->config.ry)
 	{
-		my_mlx_pixel_put(&cub->map.cub3d, cub->map.put_x, cub->map.put_y, cub->config.floor);
-		cub->map.put_y++;
+		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, cub->config.floor);
+		cub->wall.put_y++;
+	}
+}
+void	print_sprites(t_sprite *s, int size)
+{
+	for(int i = 0; i<size;i++)
+	{
+		printf("x = %f y = %f d = %f\n", s[i].x, s[i].y, s[i].dst);
+	}
+}
+void	render_sprites(t_cub *cub)
+{
+	int	i;
+
+	i = 0;
+	while(i < cub->map.spr_amt)
+	{
+		cub->map.sprites[i].dst = pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2);
+		i++;
+	}
+	print_sprites(cub->map.sprites, cub->map.spr_amt);
+	sort_arr(cub->map.sprites, cub->map.spr_amt);
+	printf("\n\n");
+	print_sprites(cub->map.sprites, cub->map.spr_amt);
+	i = 0;
+	while(i < cub->map.spr_amt)
+	{
+		render_sprite(cub, i);
+		i++;
 	}
 }
 void	ray_loop(t_cub *cub)
@@ -183,63 +213,98 @@ void	ray_loop(t_cub *cub)
 	float	k_y;
 	float	k_x;
 
-	cub->map.put_x = 0;
+	cub->wall.put_x = 0;
 	a = cub->player.angle - FOV / 2;
 	step = FOV / cub->config.rx;
-	while (cub->map.put_x < cub->config.rx)
+	while (cub->wall.put_x < cub->config.rx)
 	{
-		cub->map.put_y = 0;
+		cub->wall.put_y = 0;
 		wall_d = ray_cast(cub, a);
 		if (wall_d > 0)
-			cub->map.wall_height = cub->config.ry / (wall_d * cos(a - cub->player.angle));
+			cub->wall.height = cub->config.ry / (wall_d * cos(a - cub->player.angle));
 		else
-			cub->map.wall_height = cub->config.ry;
-		cub->map.wall_start = cub->config.ry / 2 - cub->map.wall_height / 2;
-		cub->map.wall_end = cub->config.ry - cub->map.wall_start;
+			cub->wall.height = cub->config.ry;
+		cub->wall.start = cub->config.ry / 2 - cub->wall.height / 2;
+		cub->wall.end = cub->config.ry - cub->wall.start;
 		render_wall(cub);
 		a += step;
-		cub->map.put_x++;
+		cub->wall.put_x++;
 	}
 	if (cub->map.spr_amt)
-		render_sprite(cub, 0);
+		render_sprites(cub);
+
+}
+void	swap_sprite(t_sprite *a, t_sprite *b)
+{
+		t_sprite tmp;
+
+		tmp.dst = a->dst;
+		tmp.x = a->x;
+		tmp.y = a->y;
+		a->dst = b->dst;
+		a->x = b->x;
+		a->y = b->y;
+		b->dst = tmp.dst;
+		b->x = tmp.x;
+		b->y = tmp.y;
+}
+void sort_arr(t_sprite *arr, int n)
+{
+    int		max;
+	int		index;
+	int		tmp;
+	int		flag;
+
+    for(int i = 0; i < n; i++)
+    {
+        max = arr[i].dst;
+        flag = 0;
+        for(int j = i+1; j < n; j++)
+        {
+            if (arr[j].dst > max)
+			{
+                max = arr[j].dst;
+				index = j;
+				flag = 1;
+			}
+        }
+        if (flag)
+			swap_sprite(&(arr[i]), &(arr[index]));
+    }
 }
 void	render_sprite(t_cub *cub, int i)
 {
-
-
 	float sprite_dir = atan2(cub->map.sprites[i].y - cub->player.pos_y, cub->map.sprites[i].x - cub->player.pos_x);
-    // удаление лишних оборотов
-    //while (sprite_dir - player.a >  M_PI) sprite_dir -= 2*M_PI;
-    //while (sprite_dir - player.a < -M_PI) sprite_dir += 2*M_PI;
 
-    // расстояние от игрока до спрайта
-    float sprite_dist = sqrt(pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2));
-	// printf("pl x = %f, y = %f\n", cub->player.pos_x, cub->player.pos_y);
-	// printf("sp x = %f, y = %f\n", cub->map.sprites[i].x, cub->map.sprites[i].y);
-	// printf("dist = %f\n", sprite_dist);
+
+    while (sprite_dir - cub->player.angle >  M_PI)
+		sprite_dir -= 2*M_PI;
+    while (sprite_dir - cub->player.angle < -M_PI)
+		sprite_dir += 2*M_PI;
+
+	printf("sprite dir = %f\n", sprite_dir - cub->player.angle);
+	if (sprite_dir - cub->player.angle < -M_PI_2 || sprite_dir - cub->player.angle > M_PI_2)
+		return;
+
+    //float sprite_dist = sqrt(cub->map.sprites[i].dst);
+	float sprite_dist = sqrt(pow(cub->player.pos_x - cub->map.sprites[i].x, 2) + pow(cub->player.pos_y - cub->map.sprites[i].y, 2));
     int sprite_screen_size = (int)(cub->config.ry/sprite_dist);
-    // не забывайте, что 3D вид занимает только половину кадрового буфера,
-    // таким образом, fb.w/2 для ширины экрана
 
-    int x_start = (sprite_dir - cub->player.angle)*(cub->config.rx/2)/(FOV) + (cub->config.rx/2)/2 - sprite_screen_size/2;
-
-	//printf("cos = %f\n", cosf(sprite_dir - cub->player.angle));
-	//int x_start = cub->config.rx/2 + (cub->config.rx/2 * cosf(sprite_dir - cub->player.angle) * sprite_dist) - sprite_screen_size / 2;
+	int x_start = -cos(sprite_dir - cub->player.angle + M_PI_2) * cub->config.rx + cub->config.rx/2 - sprite_screen_size / 2;
 
     int y_start = cub->config.ry/2 - sprite_screen_size/2;
-
 	int x = x_start;
-	while(x < sprite_screen_size + x_start )//&& x < cub->config.rx / 2)
+	while(x < sprite_screen_size + x_start )
 	{
-		int y = y_start;
-		/*if (x_start + x < 0 || x_start + x >= cub->config.rx)
+		if (x < 0 || x >= cub->config.rx)
 		{
 			x++;
 			continue;
-		}*/
-		while(y < sprite_screen_size + y_start)
+		}
+		int y = y_start;
+		while (y < sprite_screen_size + y_start)
 		{
-			if (y_start + y < 0 || y_start + y >= cub->config.ry)
+			if (y < 0 || y >= cub->config.ry)
 			{
 				y++;
 				continue;

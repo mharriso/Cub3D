@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 01:01:15 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 19:18:00 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,6 @@
 #define SOUTH 2
 #define EAST 3
 #define WEST 4
-enum		e_check_settings
-{
-	R,
-	NO,
-	SO,
-	WE,
-	EA,
-	S,
-	F,
-	C
-};
 
 typedef struct	s_img
 {
@@ -114,6 +103,7 @@ typedef	struct	s_sprite
 {
 	float	x;
 	float	y;
+	float	dst;
 }			t_sprite;
 
 typedef	struct	s_map
@@ -125,15 +115,6 @@ typedef	struct	s_map
 	size_t		height;
 	size_t		width;
 	t_img		cub3d;
-	int			wall_type;
-	int			wall_start;
-	int			wall_end;
-	int			wall_height;
-	int			put_x;
-	int			put_y;
-	float		ray_x;
-	float		ray_y;
-
 }				t_map;
 
 typedef struct	s_player
@@ -156,6 +137,17 @@ typedef struct	s_config
 	t_img	sprite;
 }				t_config;
 
+typedef	struct s_wall
+{
+	int			type;
+	int			start;
+	int			end;
+	int			height;
+	int			put_x;
+	int			put_y;
+	float		ray_x;
+	float		ray_y;
+}	t_wall;
 
 typedef struct	s_cub
 {
@@ -163,6 +155,7 @@ typedef struct	s_cub
 	t_map		map;
 	t_config	config;
 	t_player	player;
+	t_wall		wall;
 }				t_cub;
 
 void	exit_error(char *s);

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/22 23:18:16 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/23 21:01:16 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,10 +150,10 @@ void	parse_map_1(t_cub *cub)
 		exit_error("Error\nMissing player position");
 }
 
-void	set_sprite(t_map *map, int x, int y, int i)
+void	set_sprite(t_sprite *sprites, int x, int y, int i)
 {
-	map->sprites[i].x = x + 0.5;
-	map->sprites[i].y = y + 0.5;
+	sprites[i].x = x + 0.5;
+	sprites[i].y = y + 0.5;
 }
 
 void	parse_map_2(t_map *map)
@@ -164,7 +164,7 @@ void	parse_map_2(t_map *map)
 
 
 	if (map->spr_amt)
-		if (!(map->sprites = malloc(map->spr_amt + 1 * sizeof(t_sprite))))
+		if (!(map->sprites = malloc(map->spr_amt * sizeof(t_sprite))))
 			exit_error("Error\nCan not create sprites array");
 	y = 1;
 	i = map->spr_amt;
@@ -176,7 +176,7 @@ void	parse_map_2(t_map *map)
 			if (ft_strchr(INNER_OBJS, (map->map)[y][x]))
 				check_cross(map, x, y);
 			if (map->map[y][x] == SPRITE)
-				set_sprite(map, x, y, --i);
+				set_sprite(map->sprites, x, y, --i);
 			x++;
 		}
 		y++;
