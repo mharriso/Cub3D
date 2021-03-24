@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 23:07:35 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/24 16:21:04 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void	parse_map_2(t_map *map)
 	int	i;
 
 	if (map->spr_amt)
-		if (!(map->sprites = malloc(map->spr_amt * sizeof(t_sprite))))
+		if (!(map->sprites = malloc((map->spr_amt + 1) * sizeof(t_sprite))))
 			exit_error("Error\nCan not create sprites array");
 	y = 1;
 	i = map->spr_amt;

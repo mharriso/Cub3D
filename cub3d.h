@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/23 23:39:54 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:52:30 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,9 @@ typedef	struct	s_map
 	size_t		height;
 	size_t		width;
 	t_img		cub3d;
+	int			spr_size;
+	float		spr_dir;
+	float		spr_dst;
 }				t_map;
 
 typedef struct	s_player
@@ -145,8 +148,8 @@ typedef	struct s_wall
 	int			height;
 	int			put_x;
 	int			put_y;
-	float		dst;
 	float		*rays;
+	float		dst;
 	float		k_x;
 	float		k_y;
 	float		ray_x;
