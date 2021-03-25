@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/24 16:32:05 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/25 23:26:05 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,11 +102,11 @@ void	parse_resolution(t_setting *setting, t_cub *cub)
 	cub->config.ry = 1600;
 	x = ft_atoi(setting->words[1]);
 	y = ft_atoi(setting->words[2]);
-	if (x < 1 || y < 1)
+	if (!x || !y)
 		exit_error("Error\nWrong resolution range");
-	if (x < cub->config.rx)
+	if (x < cub->config.rx && x != -1)
 		cub->config.rx = x;
-	if (y < cub->config.ry)
+	if (y < cub->config.ry && y != -1)
 		cub->config.ry = y;
 }
 
@@ -215,6 +215,8 @@ void	get_cub_settings(char *path, t_cub *cub)
 	if (ret == -1)
 		exit_error("Error\nCan not read map file");
 	get_setting(&setting, cub);
+	if (!cub->map.map)
+		exit_error("Eror\nMissing map!");
 	close(cub->map.fd);
 }
 
@@ -275,6 +277,9 @@ int		main(int argc, char **argv)
 	init_cub(&cub);
 	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
-	render_cub(&cub);
+	if (cub3d_mode == SCREENSHOT)
+		take_screenshot(&cub);
+	else
+		render_cub(&cub);
 	//sleep(30);
 }

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/24 16:21:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/25 23:36:18 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,16 @@ void	add_new_elem(t_list **lst, char *s)
 	ft_lstadd_front(lst, elem);
 }
 
+size_t	map_line_len(char *line)
+{
+	size_t	len;
+
+	len = ft_strlen(line) - 1;
+	while (line[len] == ' ')
+		len--;
+	return (len + 1);
+}
+
 void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 {
 	char	*line;
@@ -33,7 +43,7 @@ void	create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 	while ((ret = get_next_line(map->fd, &line)) > 0 && line[0])
 	{
 		add_new_elem(map_lst, line);
-		len = ft_strlen(line);
+		len = map_line_len(line);
 		if (len > map->width)
 			map->width = len;
 		map->height++;
@@ -64,7 +74,8 @@ char	**create_map_arr(t_list **head, int height, int width)
 		height--;
 		if (!(map[height] = malloc(width + 1)))
 			exit_error("Error\nCan not create map array");
-		len = ft_strlen(tmp->content);
+		if ((len = ft_strlen(tmp->content)) > width)
+			len = width;
 		ft_memcpy(map[height], tmp->content, len);
 		while (len < width)
 			map[height][len++] = ' ';
@@ -124,14 +135,15 @@ void	parse_map_1(t_cub *cub)
 		{
 			if (!ft_strchr(VALID_OBJS, cub->map.map[y][x]))
 				exit_error("Error\nInvalid map. Invalid object detected!");
-			if (ft_strchr(INNER_OBJS, (cub->map.map)[y][x]))
+			if (ft_strchr(INNER_OBJS, cub->map.map[y][x]))
 				check_border(&cub->map, x, y);
-			if (cub->map.map[y][x] == SPRITE)
-				cub->map.spr_amt++;
 			if (ft_strchr(PLAYER, cub->map.map[y][x]))
 				set_player(cub, cub->map.map[y][x], x, y);
+			if (cub->map.map[y][x] == SPRITE)
+				cub->map.spr_amt++;
 			x++;
 		}
+		printf("%s$\n", cub->map.map[y]);
 		y++;
 	}
 	if (cub->player.pos_x == 0)

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/24 17:02:11 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/25 22:14:08 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ void	ray_loop(t_cub *cub)
 	step = FOV / cub->config.rx;
 	while (cub->wall.put_x < cub->config.rx)
 	{
+		check_angle(&a);
 		ray_cast(cub, a, cub->wall.put_x);
 		calculate_wall(cub, a, cub->wall.put_x);
 		render_wall(cub);
@@ -268,16 +269,16 @@ void	wasd_handler(int key, t_cub *cub)
 	m_sin = SPEED * sin(cub->player.angle);
 	m_cos = SPEED * cos(cub->player.angle);
 	if (key == KEY_W && cub->map.map[(int)(cub->player.pos_y + m_sin)]
-	[(int)(cub->player.pos_x + m_cos)] != '1')
+	[(int)(cub->player.pos_x + m_cos)] == '0')
 		move(&cub->player, m_sin, m_cos);
 	if (key == KEY_S && cub->map.map[(int)(cub->player.pos_y - m_sin)]
-	[(int)(cub->player.pos_x - m_cos)] != '1')
+	[(int)(cub->player.pos_x - m_cos)] == '0')
 		move(&cub->player, -m_sin, -m_cos);
 	if (key == KEY_D && cub->map.map[(int)(cub->player.pos_y + m_cos)]
-	[(int)(cub->player.pos_x - m_sin)] != '1')
+	[(int)(cub->player.pos_x - m_sin)] == '0')
 		move(&cub->player, m_cos, -m_sin);
 	if (key == KEY_A && cub->map.map[(int)(cub->player.pos_y - m_cos)]
-	[(int)(cub->player.pos_x + m_sin)] != '1')
+	[(int)(cub->player.pos_x + m_sin)] == '0')
 		move(&cub->player, -m_cos, m_sin);
 }
 
@@ -323,6 +324,8 @@ void	render_cub(t_cub *cub)
 	&cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, \
 	&cub->map.cub3d.endian);
 	ray_loop(cub);
+
+
 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, \
 	cub->map.cub3d.img, 0, 0);
 	mlx_hook(cub->mlx.win, 2, 1L << 0, key_handler, cub);

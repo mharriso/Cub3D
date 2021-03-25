@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/24 15:52:30 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/25 22:17:16 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,5 +168,8 @@ typedef struct	s_cub
 void	exit_error(char *s);
 void	get_cub_map(char *first_line, t_cub *cub);
 void	render_cub(t_cub *cub);
+void	take_screenshot(t_cub *cub);
+void	ray_loop(t_cub *cub);
+int		my_mlx_pixel_get(t_img *data, int x, int y);
 
 #endif
