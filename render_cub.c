@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/25 22:14:08 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/26 22:55:56 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,15 +228,25 @@ int		calculate_sprite(t_cub *cub, int i, int *x_start, int *y_start)
 	return (0);
 }
 
+void	put_texture_sprite(t_cub *cub, int put_x, int put_y, t_img *texture)
+{
+
+}
+
 void	render_sprite(t_cub *cub, int i)
 {
+	int		color;
 	int		x;
 	int		y;
 	int		x_start;
 	int		y_start;
+	float	a;
+	float	b;
 
 	if (calculate_sprite(cub, i, &x_start, &y_start) == 1)
 		return ;
+	a = (float)cub->map.spr_size / cub->config.sprite.width;
+	b = (float)cub->map.spr_size / cub->config.sprite.height;
 	x = x_start;
 	while (x < cub->map.spr_size + x_start)
 	{
@@ -247,7 +257,10 @@ void	render_sprite(t_cub *cub, int i)
 			while (y < cub->map.spr_size + y_start)
 			{
 				if (y >= 0 && y < cub->config.ry)
-					my_mlx_pixel_put(&cub->map.cub3d, x, y, C_MAGENTA);
+				{
+					color = my_mlx_pixel_get(&cub->config.sprite, (x - x_start) / a, (y - y_start) / b);
+					my_mlx_pixel_put(&cub->map.cub3d, x, y, color);
+				}
 				y++;
 			}
 		}
@@ -311,6 +324,13 @@ void	check_angle(float *a)
 		*a += (float)2 * M_PI;
 }
 
+// void	render(t_cub *cub)
+// {
+// 	mlx_clear_window(cub->mlx.mlx, cub->mlx.win);
+// 	ray_loop(cub);
+// 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, &cub->map.cub3d, 0, 0);
+// }
+
 void	render_cub(t_cub *cub)
 {
 	cub->wall.rays = malloc(cub->config.rx * sizeof(float));
@@ -330,5 +350,6 @@ void	render_cub(t_cub *cub)
 	cub->map.cub3d.img, 0, 0);
 	mlx_hook(cub->mlx.win, 2, 1L << 0, key_handler, cub);
 	mlx_hook(cub->mlx.win, 17, 1L << 17, close_win, &cub->mlx);
+	//mlx_loop_hook(cub->mlx.mlx, render, cub);
 	mlx_loop(cub->mlx.mlx);
 }

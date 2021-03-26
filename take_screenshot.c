@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 17:10:37 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/26 01:05:44 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/26 21:22:19 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	render_screenshot(t_cub *cub)
 	&cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, \
 	&cub->map.cub3d.endian);
 	ray_loop(cub);
-	mlx_loop(cub->mlx.mlx);
+	//mlx_loop(cub->mlx.mlx);
 }
 
 void	save(unsigned char *array, int n, int size)
@@ -114,6 +114,9 @@ void	create_bmp_file(t_img *cub3d, int x, int y)
 	int				data_size;
 	int				padding_size;
 
+	if ((fd = open("screenshot_cub3d.bmp", O_CREAT | O_WRONLY | O_TRUNC, \
+		S_IRUSR | S_IWUSR)) == -1)
+		exit_error("Error\nСan't create screenshot_cub3d.bmp");
 	padding_size = x % 4;
 	data_size = (x * 3 + padding_size) * y;
 	write(fd, create_bmp_header(data_size), BMP_HEAD_SIZE);
@@ -127,4 +130,5 @@ void	take_screenshot(t_cub *cub)
 	render_screenshot(cub);
 	printf("RENDER\n");
 	create_bmp_file(&cub->map.cub3d, cub->config.rx, cub->config.ry);
+	printf("BMP\n");
 }
