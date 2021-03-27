@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 18:30:20 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 21:22:26 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@
 # include <math.h>
 
 # include "./libft/libft.h"
-
-# define RESET   "\033[0m"
-# define RED     "\033[31m"
-
 
 # define C_TRANSP  0xFF000000
 # define C_RED     0x00FF0000
@@ -44,20 +40,12 @@
 # define SCREENSHOT 1
 
 # define SPACE " \t\v\f\r"
-# define FD STDOUT_FILENO
 # define SPRITE '2'
 # define WALL '1'
 # define PLAYER "WENS"
 # define INNER_OBJS "02WENS"
 # define VALID_OBJS " 012WENS"
 
-# define KEY_ESC 53
-# define KEY_W 13
-# define KEY_A 0
-# define KEY_S 1
-# define KEY_D 2
-# define KEY_LEFT 123
-# define KEY_RIGHT 124
 # define ROT 0.1F
 # define SPEED 0.5F
 # define FOV 1.0F
@@ -163,6 +151,7 @@ typedef struct	s_wall
 
 typedef struct	s_bmp
 {
+	int			fd;
 	int			data_size;
 	int			padding_size;
 }				t_bmp;
@@ -176,11 +165,25 @@ typedef struct	s_cub
 	t_wall		wall;
 }				t_cub;
 
-void	exit_error(char *s);
-void	get_cub_map(char *first_line, t_cub *cub);
-void	render_cub(t_cub *cub);
-void	take_screenshot(t_cub *cub);
-void	ray_loop(t_cub *cub);
-int		my_mlx_pixel_get(t_img *data, int x, int y);
+void			get_cub_settings(char *path, t_cub *cub);
+void			parse_color(t_setting *setting, int *color);
+void			parse_resolution(t_setting *setting, t_cub *cub);
+void			get_cub_map(char *first_line, t_cub *cub);
+void			parse_map_1(t_cub *cub);
+void			parse_map_2(t_map *map);
+int				key_handler(int key, t_cub *cub);
+void			render_cub(t_cub *cub);
+void			ray_loop(t_cub *cub);
+void			render_wall(t_cub *cub, float a);
+void			render_sprites(t_cub *cub);
+int				my_mlx_pixel_get(t_img *data, int x, int y);
+void			my_mlx_pixel_put(t_img *data, int x, int y, int color);
+void			check_angle(float *a);
+void			sort_array(t_sprite *arr, int n);
+char			**free_2d_array(char **array);
+void			take_screenshot(t_cub *cub);
+void			create_bmp_file(t_img *cub3d, int x, int y);
+int				close_win(t_mlx *mlx);
+void			exit_error(char *s);
 
 #endif
