@@ -6,17 +6,15 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/26 22:55:56 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 19:31:37 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	check_angle(float *i);
-int		render_next_frame(t_cub *cub);
-void	draw_2dmap(t_cub *cub);
-void	render_sprite(t_cub *cub, int i);
-void	sort_arr(t_sprite *arr, int n);
+void	check_angle(float *a);
+void	put_sprite(t_cub *cub, int i);
+void	sort_array(t_sprite *arr, int n);
 
 int		close_win(t_mlx *mlx)
 {
@@ -70,7 +68,7 @@ void	ray_cast(t_cub *cub, float a, int i)
 	}
 }
 
-void	put_texture(t_cub *cub, t_img *texture, float k)
+void	put_texture_wall(t_cub *cub, t_img *texture, float k)
 {
 	int		get_y;
 	int		get_x;
@@ -96,13 +94,13 @@ void	render_wall(t_cub *cub)
 	while (cub->wall.put_y < cub->wall.end && cub->wall.put_y < cub->config.ry)
 	{
 		if (cub->wall.type == NORTH)
-			put_texture(cub, &cub->config.north, cub->wall.k_x);
+			put_texture_wall(cub, &cub->config.north, cub->wall.k_x);
 		else if (cub->wall.type == SOUTH)
-			put_texture(cub, &cub->config.south, cub->wall.k_x);
+			put_texture_wall(cub, &cub->config.south, cub->wall.k_x);
 		else if (cub->wall.type == EAST)
-			put_texture(cub, &cub->config.east, cub->wall.k_y);
+			put_texture_wall(cub, &cub->config.east, cub->wall.k_y);
 		else if (cub->wall.type == WEST)
-			put_texture(cub, &cub->config.west, cub->wall.k_y);
+			put_texture_wall(cub, &cub->config.west, cub->wall.k_y);
 		cub->wall.put_y++;
 	}
 	while (cub->wall.put_y < cub->config.ry)
@@ -125,11 +123,11 @@ void	render_sprites(t_cub *cub)
 		pow(cub->player.pos_y - cub->map.sprites[i].y, 2);
 		i++;
 	}
-	sort_arr(cub->map.sprites, cub->map.spr_amt);
+	sort_array(cub->map.sprites, cub->map.spr_amt);
 	i = 0;
 	while (i < cub->map.spr_amt)
 	{
-		render_sprite(cub, i);
+		put_sprite(cub, i);
 		i++;
 	}
 }
@@ -183,7 +181,7 @@ void	swap_sprite(t_sprite *a, t_sprite *b)
 	b->y = tmp.y;
 }
 
-void	sort_arr(t_sprite *arr, int n)
+void	sort_array(t_sprite *arr, int n)
 {
 	int		max;
 	int		index;
@@ -228,43 +226,44 @@ int		calculate_sprite(t_cub *cub, int i, int *x_start, int *y_start)
 	return (0);
 }
 
-void	put_texture_sprite(t_cub *cub, int put_x, int put_y, t_img *texture)
+void	get_tex_color(t_cub *cub, t_sprite_rend *sr)
 {
-
-}
-
-void	render_sprite(t_cub *cub, int i)
-{
-	int		color;
-	int		x;
-	int		y;
-	int		x_start;
-	int		y_start;
 	float	a;
 	float	b;
 
-	if (calculate_sprite(cub, i, &x_start, &y_start) == 1)
-		return ;
 	a = (float)cub->map.spr_size / cub->config.sprite.width;
 	b = (float)cub->map.spr_size / cub->config.sprite.height;
-	x = x_start;
-	while (x < cub->map.spr_size + x_start)
+	sr->color = my_mlx_pixel_get(&cub->config.sprite, \
+		(sr->x - sr->x_start) / a, (sr->y - sr->y_start) / b);
+	if (sr->color == C_TRANSP)
+		sr->color = 0;
+}
+
+void	put_sprite(t_cub *cub, int i)
+{
+	t_sprite_rend	sr;
+
+	if (calculate_sprite(cub, i, &sr.x_start, &sr.y_start) == 1)
+		return ;
+	sr.x = sr.x_start;
+	while (sr.x < cub->map.spr_size + sr.x_start)
 	{
-		if (x >= 0 && x < cub->config.rx && \
-		cub->wall.rays[x] >= cub->map.spr_dst)
+		if (sr.x >= 0 && sr.x < cub->config.rx && \
+		cub->wall.rays[sr.x] >= cub->map.spr_dst)
 		{
-			y = y_start;
-			while (y < cub->map.spr_size + y_start)
+			sr.y = sr.y_start;
+			while (sr.y < cub->map.spr_size + sr.y_start)
 			{
-				if (y >= 0 && y < cub->config.ry)
+				if (sr.y >= 0 && sr.y < cub->config.ry)
 				{
-					color = my_mlx_pixel_get(&cub->config.sprite, (x - x_start) / a, (y - y_start) / b);
-					my_mlx_pixel_put(&cub->map.cub3d, x, y, color);
+					get_tex_color(cub, &sr);
+					if (sr.color)
+						my_mlx_pixel_put(&cub->map.cub3d, sr.x, sr.y, sr.color);
 				}
-				y++;
+				sr.y++;
 			}
 		}
-		x++;
+		sr.x++;
 	}
 }
 
@@ -324,12 +323,12 @@ void	check_angle(float *a)
 		*a += (float)2 * M_PI;
 }
 
-// void	render(t_cub *cub)
-// {
-// 	mlx_clear_window(cub->mlx.mlx, cub->mlx.win);
-// 	ray_loop(cub);
-// 	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, &cub->map.cub3d, 0, 0);
-// }
+void	render(t_cub *cub)
+{
+	mlx_clear_window(cub->mlx.mlx, cub->mlx.win);
+	ray_loop(cub);
+	mlx_put_image_to_window(cub->mlx.mlx, cub->mlx.win, &cub->map.cub3d, 0, 0);
+}
 
 void	render_cub(t_cub *cub)
 {

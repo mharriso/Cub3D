@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 17:10:37 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/26 21:22:19 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 19:25:20 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	render_screenshot(t_cub *cub)
 	&cub->map.cub3d.bits_per_pixel, &cub->map.cub3d.line_length, \
 	&cub->map.cub3d.endian);
 	ray_loop(cub);
-	//mlx_loop(cub->mlx.mlx);
 }
 
 void	save(unsigned char *array, int n, int size)
@@ -83,14 +82,14 @@ unsigned char	*create_dib_header(int data_size, int x, int y)
 	return (header);
 }
 
-unsigned char	*create_pixel_array(int data_size, int padding, t_img *cub3d, int r_x, int r_y)
+unsigned char	*create_pixel_array(t_bmp *bmp, t_img *cub3d, int r_x, int r_y)
 {
 	unsigned char	*pixels;
 	int				x;
 	int				offset;
 	int				color;
 
-	if (!(pixels = ft_calloc(data_size, 1)))
+	if (!(pixels = ft_calloc(bmp->data_size, 1)))
 		exit_error("Error\nFailed create array");
 	offset = 0;
 	while (r_y--)
@@ -103,7 +102,7 @@ unsigned char	*create_pixel_array(int data_size, int padding, t_img *cub3d, int 
 			offset += 3;
 			x++;
 		}
-		offset += padding;
+		offset += bmp->padding_size;
 	}
 	return (pixels);
 }
@@ -111,24 +110,21 @@ unsigned char	*create_pixel_array(int data_size, int padding, t_img *cub3d, int 
 void	create_bmp_file(t_img *cub3d, int x, int y)
 {
 	int				fd;
-	int				data_size;
-	int				padding_size;
+	t_bmp			bmp;
 
 	if ((fd = open("screenshot_cub3d.bmp", O_CREAT | O_WRONLY | O_TRUNC, \
 		S_IRUSR | S_IWUSR)) == -1)
 		exit_error("Error\nСan't create screenshot_cub3d.bmp");
-	padding_size = x % 4;
-	data_size = (x * 3 + padding_size) * y;
-	write(fd, create_bmp_header(data_size), BMP_HEAD_SIZE);
-	write(fd, create_dib_header(data_size, x, y), DIB_HEAD_SIZE);
-	write(fd, create_pixel_array(data_size, padding_size, cub3d, x, y), data_size);
+	bmp.padding_size = x % 4;
+	bmp.data_size = (x * 3 + bmp.padding_size) * y;
+	write(fd, create_bmp_header(bmp.data_size), BMP_HEAD_SIZE);
+	write(fd, create_dib_header(bmp.data_size, x, y), DIB_HEAD_SIZE);
+	write(fd, create_pixel_array(&bmp, cub3d, x, y), bmp.data_size);
 	close(fd);
 }
 
 void	take_screenshot(t_cub *cub)
 {
 	render_screenshot(cub);
-	printf("RENDER\n");
 	create_bmp_file(&cub->map.cub3d, cub->config.rx, cub->config.ry);
-	printf("BMP\n");
 }

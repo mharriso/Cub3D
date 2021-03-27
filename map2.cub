@@ -1,9 +1,9 @@
-R 1500 1000
+R  1503 1000
 NO texture/sky_stars5.xpm
 SO texture/fire_b_r.xpm
 WE texture/fire_b_r2.xpm
 EA texture/fire_b_r3.xpm
-S  texture/sprite1.xpm
+S  texture/sprite2.xpm
 
 C 80,70,190
 F 20,0,0

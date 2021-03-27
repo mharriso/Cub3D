@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/25 23:26:05 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 19:29:38 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	parse_resolution(t_setting *setting, t_cub *cub)
 		exit_error("Error\nWrong resolution format");
 	if (!check_digits(setting->words[2]))
 		exit_error("Error\nWrong resolution format");
-	//mlx_get_screen_size(cub->mlx.mlx, &cub->config.rx, &cub->config.ry);
+	//mlx_get_screen_size(&cub->config.rx, &cub->config.ry);
 	cub->config.rx = 2400;
 	cub->config.ry = 1600;
 	x = ft_atoi(setting->words[1]);
@@ -273,7 +273,6 @@ int		main(int argc, char **argv)
 	int		cub3d_mode;
 	t_cub	cub;
 
-	errno = 0;
 	init_cub(&cub);
 	check_args(argc, argv, &cub3d_mode);
 	get_cub_settings(argv[1], &cub);
@@ -281,5 +280,7 @@ int		main(int argc, char **argv)
 		take_screenshot(&cub);
 	else
 		render_cub(&cub);
-	//sleep(30);
+	sleep(30);
+	return (0);
+
 }
