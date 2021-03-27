@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:22:26 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 21:57:16 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define CUB3D_H
 
 # include "mlx.h"
-# include <stdio.h>
 # include <stdlib.h>
+# include <stdio.h>
 # include <fcntl.h>
 # include <errno.h>
 # include <math.h>
