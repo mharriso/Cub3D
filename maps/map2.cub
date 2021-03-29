@@ -1,12 +1,12 @@
 R  1503 1000
-NO texture/sky_stars5.xpm
-SO texture/fire_b_r.xpm
-WE texture/fire_b_r2.xpm
-EA texture/fire_b_r3.xpm
-S  texture/sprite2.xpm
+NO texture/room2.xpm
+SO texture/room3.xpm
+WE texture/room4.xpm
+EA texture/room5.xpm
+S  texture/alpaca_w.xpm
 
-C 80,70,190
-F 20,0,0
+C 239,167,47 
+F 93,60,45
                   111111111
                  11100000111
                  10020000001

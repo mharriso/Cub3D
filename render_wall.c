@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:56:27 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:10:31 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:39:22 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static void		put_texture_wall(t_cub *cub, t_img *texture, float k)
 	get_x = k * texture->width;
 	get_y = (cub->wall.put_y - cub->wall.start) / d;
 	color = my_mlx_pixel_get(texture, get_x, get_y);
+	shadow_effect(cub->wall.rays[cub->wall.put_x] * SHADOW, &color);
 	my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, color);
 }
 

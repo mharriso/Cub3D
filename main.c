@@ -6,13 +6,13 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:19:41 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:51:39 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static	void	init_cub(t_cub *cub)
+static void		init_cub(t_cub *cub)
 {
 	if (!(cub->mlx.mlx = mlx_init()))
 		exit_error("Error\nMlx init error");

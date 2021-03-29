@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:57:16 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:50:35 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@
 
 # define ROT 0.1F
 # define SPEED 0.5F
-# define FOV 1.0F
+# define FOV 1.1F
+# define SHADOW 10
 
 # define NORTH 1
 # define SOUTH 2
@@ -178,6 +179,7 @@ void			render_wall(t_cub *cub, float a);
 void			render_sprites(t_cub *cub);
 int				my_mlx_pixel_get(t_img *data, int x, int y);
 void			my_mlx_pixel_put(t_img *data, int x, int y, int color);
+void			shadow_effect(int k, int *color);
 void			check_angle(float *a);
 void			sort_array(t_sprite *arr, int n);
 char			**free_2d_array(char **array);

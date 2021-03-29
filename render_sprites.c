@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:57:13 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:20:43 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:41:03 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static void	get_tex_color(t_cub *cub, t_sprite_rend *sr)
 	b = (float)cub->map.spr_size / cub->config.sprite.height;
 	sr->color = my_mlx_pixel_get(&cub->config.sprite, \
 		(sr->x - sr->x_start) / a, (sr->y - sr->y_start) / b);
+	shadow_effect(cub->map.spr_dst * SHADOW, &sr->color);
 	if (sr->color == C_TRANSP)
 		sr->color = 0;
 }
