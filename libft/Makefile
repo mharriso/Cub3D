@@ -45,8 +45,8 @@ BONUS_FILES = ft_lstadd_back.c \
 				ft_lstclear.c \
 				ft_lstmap.c \
 				ft_lstiter.c \
-				ft_split_set \
-				ft_strcmp \
+				ft_split_set.c \
+				ft_strcmp.c \
 				get_next_line.c
 
 OBJ_BONUS = $(BONUS_FILES:.c=.o)
@@ -60,7 +60,7 @@ $(NAME): $(OBJ)
 	ar rc $(NAME) $(OBJ)
 
 bonus: $(OBJ) $(OBJ_BONUS)
-	ar rc $(NAME) $(OBJ_BONUS) $(OBJ)
+	ar rc $(NAME) $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(OBJ_BONUS)

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/29 20:19:11 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:39:55 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ static void		add_new_elem(t_list **lst, char *s)
 	ft_lstadd_front(lst, elem);
 }
 
-static size_t	map_line_len(char *line)
+static int	map_line_len(char *line)
 {
-	size_t	len;
+	int	len;
 
 	len = ft_strlen(line) - 1;
 	while (line[len] == ' ')
@@ -36,7 +36,7 @@ static void		create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 {
 	char	*line;
 	int		ret;
-	size_t	len;
+	int		len;
 
 	line = NULL;
 	add_new_elem(map_lst, first_line);

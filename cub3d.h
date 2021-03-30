@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 17:30:13 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 18:32:10 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,27 +36,27 @@
 # define C_G       0x00000100
 # define C_B       0x00000001
 
-# define RUN_GAME 0
+# define RUN_GAME   0
 # define SCREENSHOT 1
 
-# define SPACE " \t\v\f\r"
-# define SPRITE '2'
-# define WALL '1'
-# define PLAYER "WENS"
+# define SPACE       " \t\v\f\r"
+# define SPRITE     '2'
+# define WALL       '1'
+# define PLAYER     "WENS"
 # define INNER_OBJS "02WENS"
 # define VALID_OBJS " 012WENS"
 
-# define ROT 0.1F
-# define SPEED 0.5F
-# define FOV 1.1F
-# define SHADOW 10
+# define ROT      0.1F
+# define SPEED    0.5F
+# define FOV      1.1F
+# define SHADOW   10
 # define SHADOW_F 4
 # define SHADOW_C 6
 
 # define NORTH 1
 # define SOUTH 2
-# define EAST 3
-# define WEST 4
+# define EAST  3
+# define WEST  4
 
 typedef struct	s_img
 {

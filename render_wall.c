@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:56:27 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 17:35:17 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:40:17 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ static void		render_ceiling(t_cub *cub)
 
 static void		render_floor(t_cub *cub)
 {
-	int color;
 	int i;
 
 	i = cub->config.ry;

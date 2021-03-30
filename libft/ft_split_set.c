@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 19:41:20 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/04 01:57:45 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 18:55:01 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static	size_t	count_words(char const *s, char *set)
 	count = 0;
 	while (s[i] && s[i + 1])
 	{
-		if(!(ft_strchr(set, s[i])) && ft_strchr(set, s[i + 1]))
+		if (!(ft_strchr(set, s[i])) && ft_strchr(set, s[i + 1]))
 			count++;
 		i++;
 	}
@@ -34,7 +34,7 @@ static	size_t	get_word_len(const char *s, char *set)
 	int i;
 
 	i = 0;
-	while(s[i] && !(ft_strchr(set, s[i])))
+	while (s[i] && !(ft_strchr(set, s[i])))
 		i++;
 	return (i);
 }
@@ -79,16 +79,3 @@ char			**ft_split_set(char const *s, char *set, size_t *len)
 	}
 	return (res);
 }
-
-//  #include <stdio.h>
-
-//  int main (int argc, char *argv[])
-//  {
-
-// 	char **s = ft_split_set("1,   2,     3,    658768\n,        ,,,   7", ", ");
-// 	//char **s = ft_split_set("", "");
-// 	for (size_t i = 0; s[i]; i++)
-// 		printf("%s$\n", s[i]);
-// 	free_words(s);
-// 	return 0;
-//  }
