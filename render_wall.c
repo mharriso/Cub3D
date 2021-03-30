@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:56:27 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/29 19:39:22 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:35:17 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,27 @@ static void		render_ceiling(t_cub *cub)
 {
 	while (cub->wall.put_y < cub->wall.start)
 	{
+		if (cub->wall.put_y % SHADOW_F == 1)
+			shadow_effect(1, &cub->wall.color);
 		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, \
-			cub->wall.put_y, cub->config.ceiling);
+			cub->wall.put_y, cub->wall.color);
 		cub->wall.put_y++;
 	}
 }
 
 static void		render_floor(t_cub *cub)
 {
-	while (cub->wall.put_y < cub->config.ry)
+	int color;
+	int i;
+
+	i = cub->config.ry;
+	while (i > cub->wall.put_y)
 	{
+		i--;
+		if (i % SHADOW_C == 1)
+			shadow_effect(1, &cub->wall.color);
 		my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, \
-		cub->wall.put_y, cub->config.floor);
-		cub->wall.put_y++;
+		i, cub->wall.color);
 	}
 }
 
@@ -64,6 +72,7 @@ void			render_wall(t_cub *cub, float a)
 {
 	calculate_wall(cub, a, cub->wall.put_x);
 	cub->wall.put_y = 0;
+	cub->wall.color = cub->config.ceiling;
 	render_ceiling(cub);
 	while (cub->wall.put_y < cub->wall.end && cub->wall.put_y < cub->config.ry)
 	{
@@ -77,5 +86,6 @@ void			render_wall(t_cub *cub, float a)
 			put_texture_wall(cub, &cub->config.west, cub->wall.k_y);
 		cub->wall.put_y++;
 	}
+	cub->wall.color = cub->config.floor;
 	render_floor(cub);
 }

@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/29 19:50:35 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 17:30:13 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@
 # define SPEED 0.5F
 # define FOV 1.1F
 # define SHADOW 10
+# define SHADOW_F 4
+# define SHADOW_C 6
 
 # define NORTH 1
 # define SOUTH 2
@@ -106,8 +108,8 @@ typedef struct	s_map
 	int			fd;
 	int			spr_amt;
 	t_sprite	*sprites;
-	size_t		height;
-	size_t		width;
+	int			height;
+	int			width;
 	t_img		cub3d;
 	int			spr_size;
 	float		spr_dir;
@@ -142,6 +144,7 @@ typedef struct	s_wall
 	int			height;
 	int			put_x;
 	int			put_y;
+	int			color;
 	float		*rays;
 	float		dst;
 	float		k_x;

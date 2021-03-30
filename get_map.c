@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:14:48 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/29 20:19:11 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,8 @@ static void		create_map_lst(char *first_line, t_list **map_lst, t_map *map)
 static char		**create_map_arr(t_list **head, int height, int width)
 {
 	char	**map;
-	int		i;
 	t_list	*tmp;
-	size_t	len;
+	int		len;
 
 	tmp = *head;
 	if (!(map = malloc((height + 1) * sizeof(char *))))

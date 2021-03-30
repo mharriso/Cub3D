@@ -231,7 +231,7 @@ void	gradient0(t_img img, int rx, int ry, int size)
 	}
 }
 
-void	gradient(t_img img, int rx, int ry, int size)
+void	gradient(t_img img, int rx, int ry)
 {
 	int		color;
 	int		move;

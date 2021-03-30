@@ -25,7 +25,7 @@ $(NAME):	$(OBJS)
 		make bonus -C $(LIBFT)
 		cp libft/libft.a ./$(NAME)
 		make -C ${MLX}
-		gcc ${CFLAGS} -I ${HDRS} main.c $(SRCS) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+		gcc ${CFLAGS} -I ${HDRS} main.c libft.a $(SRCS) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
 
 
 bonus: $(NAME)

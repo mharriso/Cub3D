@@ -51,7 +51,7 @@ void	mix_stripes(t_img img, int rx, int ry, int size);
 void	mix_cylinders(t_img img, int rx, int ry, int size);
 void	random_gradient(t_img img, int rx, int ry);
 void	mix(t_img img, int rx, int ry, int size);
-void	gradient(t_img img, int rx, int ry, int size);
+void	gradient(t_img img, int rx, int ry);
 
 int		invert_color(int color);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);

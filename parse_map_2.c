@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:49:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 20:52:37 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/30 16:24:48 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@ static void	check_cross(t_map *map, int x, int y)
 	if (map->map[y - 1][x] == ' ')
 		exit_error("Error\nInvalid map. Gap detected!");
 	if (map->map[y + 1][x] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (map->map[y - 1][x - 1] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (map->map[y + 1][x + 1] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (map->map[y - 1][x + 1] == ' ')
+		exit_error("Error\nInvalid map. Gap detected!");
+	if (map->map[y + 1][x - 1] == ' ')
 		exit_error("Error\nInvalid map. Gap detected!");
 }
 
