@@ -53,14 +53,14 @@ OBJ_BONUS = $(BONUS_FILES:.c=.o)
 
 all: $(NAME)
 
-$(OBJ): $(FILES)
-	gcc -c $(FLAGS) $(FILES)
+%.o: %.c
+	gcc -c $(FLAGS) $< -o $@
 
 $(NAME): $(OBJ)
 	ar rc $(NAME) $(OBJ)
 
 bonus: $(OBJ) $(OBJ_BONUS)
-	ar rc $(NAME) $(OBJ)
+	ar rc $(NAME) $(OBJ) $(OBJ_BONUS)
 
 clean:
 	rm -f $(OBJ) $(OBJ_BONUS)

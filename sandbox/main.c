@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 19:54:07 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 16:35:41 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:51:41 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,34 @@ void shadow(t_img *img, int rx, int ry)
 		x++;
 	}
 }
+
+t_img	resize(t_img img, t_vars *vars, int new_x, int new_y)
+{
+	t_img	new_img;
+	int		color;
+	float	a;
+	float	b;
+
+	new_img.img = mlx_new_image(vars->mlx, new_x, new_y);
+	new_img.addr = mlx_get_data_addr(new_img.img, &new_img.bits_per_pixel, &new_img.line_length, &new_img.endian);
+	a = (float)new_x / img.width;
+	b = (float)new_y / img.height;
+	for(int y = 0; y < new_y; y++)
+		for(int x = 0; x < new_x; x++)
+		{
+				color = my_mlx_pixel_get(&img, x/a, y/b);
+				my_mlx_pixel_put(&new_img, x , y, color);
+		}
+	return new_img;
+}
+
+int		render_next_frame(t_art *art)
+{
+	mlx_clear_window(art->vars->mlx, art->vars->win);
+	mlx_put_image_to_window(art->vars->mlx, art->vars->win, art->back->img, 0, 0);
+	mlx_put_image_to_window(art->vars->mlx, art->vars->win, art->obj->img, art->obj->x, art->obj->y);
+	return 0;
+}
 int			main(int argc, char **argv)
 {
 	t_vars	vars;
@@ -95,11 +123,13 @@ int			main(int argc, char **argv)
 	rx = 1400;
 	ry = 1000;
 	size = 5;
+	int w,h;
 	vars.win = mlx_new_window(vars.mlx, rx, ry, "GRADIENTS");
-	img.img = mlx_new_image(vars.mlx, rx, ry);
+	img.img = mlx_xpm_file_to_image(vars.mlx, "texture/sprite2.xpm", &w, &h);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
-	shadow(&img, rx, ry);
+	//shadow(&img, rx, ry);
+
 
 	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
 	mlx_hook(vars.win, 2, 1L<<0, close, &vars);

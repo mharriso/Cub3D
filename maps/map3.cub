@@ -1,18 +1,18 @@
-R 803 600
-NO texture/ballons.xpm
-SO texture/ice-1_1.xpm
-WE texture/fire_stone_1.xpm
-EA texture/fire_b_r3.xpm
-S  texture/ballons.xpm
+R 1200 1000
+NO texture/sprite2.xpm
+SO texture/sprite2.xpm
+WE texture/sprite2.xpm
+EA texture/sprite2.xpm
+S  texture/sprite2.xpm
 
 C 200,100,100
 F 30,0,0
 
 111111111
-100020001
 100000001
-1200000211111111111111111
-1000000000000000000000201
+100000001
+1000000011111111111111111
+1000000000000000000000001
 1000N00011111111111111111
 100000001
 111111111

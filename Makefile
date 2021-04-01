@@ -25,7 +25,7 @@ RM		=	rm -f
 
 all:	$(NAME)
 
-$(%.o): $(%.c)
+%.o:%.c
 	gcc $(CFLAGS) -c $< -o $@
 
 $(LIB):

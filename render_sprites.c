@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:57:13 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/29 20:24:47 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:38:19 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static void	put_sprite(t_cub *cub, int i)
 				if (sr.y >= 0 && sr.y < cub->config.ry)
 				{
 					get_tex_color(cub, &sr);
-					if (sr.color)
+					if (sr.color != 0)
 						my_mlx_pixel_put(&cub->map.cub3d, sr.x, sr.y, sr.color);
 				}
 				sr.y++;

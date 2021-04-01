@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 17:39:55 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:38:41 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void		add_new_elem(t_list **lst, char *s)
 	ft_lstadd_front(lst, elem);
 }
 
-static int	map_line_len(char *line)
+static int		map_line_len(char *line)
 {
 	int	len;
 

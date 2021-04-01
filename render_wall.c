@@ -6,23 +6,26 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:56:27 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 17:40:17 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/04/01 22:23:03 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void		put_texture_wall(t_cub *cub, t_img *texture, float k)
+static void		put_texture_wall(t_cub *cub, t_img *tex, float k, int mirror)
 {
 	int		get_y;
 	int		get_x;
 	int		color;
 	float	d;
 
-	d = (float)cub->wall.height / (float)texture->height;
-	get_x = k * texture->width;
+	if (mirror)
+		get_x = tex->width - k * tex->width;
+	else
+		get_x = k * tex->width;
+	d = (float)cub->wall.height / (float)tex->height;
 	get_y = (cub->wall.put_y - cub->wall.start) / d;
-	color = my_mlx_pixel_get(texture, get_x, get_y);
+	color = my_mlx_pixel_get(tex, get_x, get_y);
 	shadow_effect(cub->wall.rays[cub->wall.put_x] * SHADOW, &color);
 	my_mlx_pixel_put(&cub->map.cub3d, cub->wall.put_x, cub->wall.put_y, color);
 }
@@ -76,13 +79,13 @@ void			render_wall(t_cub *cub, float a)
 	while (cub->wall.put_y < cub->wall.end && cub->wall.put_y < cub->config.ry)
 	{
 		if (cub->wall.type == NORTH)
-			put_texture_wall(cub, &cub->config.north, cub->wall.k_x);
+			put_texture_wall(cub, &cub->config.north, cub->wall.k_x, 0);
 		else if (cub->wall.type == SOUTH)
-			put_texture_wall(cub, &cub->config.south, cub->wall.k_x);
+			put_texture_wall(cub, &cub->config.south, cub->wall.k_x, 1);
 		else if (cub->wall.type == EAST)
-			put_texture_wall(cub, &cub->config.east, cub->wall.k_y);
+			put_texture_wall(cub, &cub->config.east, cub->wall.k_y, 0);
 		else if (cub->wall.type == WEST)
-			put_texture_wall(cub, &cub->config.west, cub->wall.k_y);
+			put_texture_wall(cub, &cub->config.west, cub->wall.k_y, 1);
 		cub->wall.put_y++;
 	}
 	cub->wall.color = cub->config.floor;

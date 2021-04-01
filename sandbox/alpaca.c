@@ -54,7 +54,7 @@ t_img	resize(t_img img, t_vars *vars, int new_x, int new_y)
 	for(int y = 0; y < new_y; y++)
 		for(int x = 0; x < new_x; x++)
 		{
-				color = my_mlx_pixel_get(&img, x/a, y/b);
+				color = my_mlx_pixel_get(&img, ((new_x - 1) - x)/a, y/b);
 				my_mlx_pixel_put(&new_img, x , y, color);
 		}
 	return new_img;
