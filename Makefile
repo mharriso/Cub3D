@@ -10,7 +10,7 @@ MLX	=	libmlx.a
 
 MLXFLAGS	=	-framework OpenGL -framework AppKit
 
-HDRS	=	./
+HDRS	=	./includes/
 
 SRCS	:= get_cub_settings_1.c get_cub_settings_2.c \
 			get_map.c parse_map_1.c parse_map_2.c \

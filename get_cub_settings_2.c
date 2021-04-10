@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 19:51:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/04/02 00:59:52 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/03/27 21:21:24 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void		parse_resolution(t_setting *setting, t_cub *cub)
 	if (!check_digits(setting->words[2]))
 		exit_error("Error\nWrong resolution format");
 	get_screen_size(&cub->config.rx, &cub->config.ry);
+	cub->config.rx = 2400;
+	cub->config.ry = 1600;
 	x = ft_atoi(setting->words[1]);
 	y = ft_atoi(setting->words[2]);
 	if (!x || !y)

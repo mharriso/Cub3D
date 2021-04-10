@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/04/01 22:12:26 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/04/10 20:52:18 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ void		ray_loop(t_cub *cub)
 
 void		render_cub(t_cub *cub)
 {
-	cub->wall.rays = malloc(cub->config.rx * sizeof(float));
+	if(!(cub->wall.rays = malloc(cub->config.rx * sizeof(float))))
+		exit_error("Error");
 	if (!(cub->mlx.win = mlx_new_window(cub->mlx.mlx, cub->config.rx, \
 		cub->config.ry, "CUB3D")))
 		exit_error("Error\nFailed creating mlx window");

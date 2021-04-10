@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 16:53:51 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 16:55:35 by mharriso         ###   ########.fr       */
+/*   Updated: 2021/04/01 22:28:43 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ static void		check_args(int argc, char **argv, int *cub3d_mode)
 			*cub3d_mode = SCREENSHOT;
 			return ;
 		}
+		else
+			exit_error("Error\nInvalid argument");
 	}
 	*cub3d_mode = RUN_GAME;
 }
