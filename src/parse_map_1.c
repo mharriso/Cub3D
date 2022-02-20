@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:44:48 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:50:33 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:06 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static void	set_player(t_cub *cub, char dir, int x, int y)
 {

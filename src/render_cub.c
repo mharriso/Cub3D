@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 18:26:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/04/10 20:52:18 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:26 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static void	ray_cast(t_cub *cub, float a, int i)
 {

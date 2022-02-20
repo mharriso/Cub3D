@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 19:51:22 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:21:24 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:27:18 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static int	check_digits(char *s)
 {

@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:19:15 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 20:30:04 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:27:26 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 #define BMP_HEAD_SIZE 14
 #define DIB_HEAD_SIZE 40

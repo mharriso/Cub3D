@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:40:00 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/31 21:38:41 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:27:48 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static void		add_new_elem(t_list **lst, char *s)
 {

@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:41:59 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 21:20:22 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:27:53 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 #define KEY_ESC 53
 #define KEY_W 13

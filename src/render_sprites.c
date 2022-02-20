@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:57:13 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/31 21:38:19 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:35 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static int	calculate_sprite(t_cub *cub, int i, int *x_start, int *y_start)
 {

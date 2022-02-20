@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 19:56:59 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/29 19:40:38 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:27:35 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"

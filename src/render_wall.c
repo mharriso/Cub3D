@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:56:27 by mharriso          #+#    #+#             */
-/*   Updated: 2021/04/01 22:21:05 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:42 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static void		put_texture_wall(t_cub *cub, t_img *tex, float k, int mirror)
 {

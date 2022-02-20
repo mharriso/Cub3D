@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 17:10:37 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/27 20:19:25 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:50 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 void	render_screenshot(t_cub *cub)
 {

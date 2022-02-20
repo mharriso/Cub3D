@@ -6,11 +6,11 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/27 20:49:34 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 16:24:48 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:28:15 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../include/cub3d.h"
 
 static void	check_cross(t_map *map, int x, int y)
 {
