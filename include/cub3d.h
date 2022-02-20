@@ -6,7 +6,7 @@
 /*   By: mharriso <mharriso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:39:50 by mharriso          #+#    #+#             */
-/*   Updated: 2021/03/30 18:32:10 by mharriso         ###   ########.fr       */
+/*   Updated: 2022/02/20 04:26:47 by mharriso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <errno.h>
 # include <math.h>
 
-# include "./libft/libft.h"
+# include "../libft/libft.h"
 
 # define C_TRANSP  0xFF000000
 # define C_RED     0x00FF0000
