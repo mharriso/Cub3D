@@ -1,27 +1,23 @@
 CC		=	gcc
-
 NAME	=	cub3D
-
 CFLAGS	=	-Wall -Wextra -Werror
-
 LIB	=	libft.a
-
 MLX	=	libmlx.a
-
 MLXFLAGS	=	-framework OpenGL -framework AppKit
-
-HDRS	=	./includes/
-
+INCLUDE		=	./include
+SRCDIR		= src
+OBJDIR		= .obj
 SRCS	:= get_cub_settings_1.c get_cub_settings_2.c \
 			get_map.c parse_map_1.c parse_map_2.c \
 			render_cub.c render_wall.c render_sprites.c \
 			take_screenshot.c create_bmp_file.c \
 			cub3d_utils_1.c cub3d_utils_2.c \
 			key_handler.c main.c
+SRCS	:= $(addprefix $(SRCDIR)/, $(SRCS))
+OBJS	= $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-OBJS	=	$(SRCS:.c=.o)
-
-RM		=	rm -f
+GREEN	= \033[1;32m
+RESET	= \033[0m
 
 all:	$(NAME)
 
@@ -29,23 +25,32 @@ all:	$(NAME)
 	gcc $(CFLAGS) -c $< -o $@
 
 $(LIB):
-	$(MAKE) bonus -C libft
+	@$(MAKE) bonus -C libft
 	@mv libft/libft.a .
 $(MLX):
-	$(MAKE) -C mlx
+	@$(MAKE) -C mlx
 	@mv mlx/libmlx.a .
+# $(NAME): $(OBJS) $(LIB) $(MLX)
+# 	gcc $(CFLAGS) -I $(HDRS) -I libft $(OBJS) $(LIB) $(MLX) $(MLXFLAGS) -o $(NAME)
+
 $(NAME): $(OBJS) $(LIB) $(MLX)
-	gcc $(CFLAGS) -I $(HDRS) -I libft $(OBJS) $(LIB) $(MLX) $(MLXFLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIB) $(MLX) $(MLXFLAGS) -o $@
+	@echo "$(GREEN)Built target $(NAME)$(RESET)"
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -I $(INCLUDE) -c $< -o $@
+$(OBJDIR):
+	@mkdir -p $@
 
 bonus: $(NAME)
 
 clean:
-		$(RM) $(OBJS)
+		@-rm -rf $(OBJDIR)
 		make clean -C libft
 		make clean -C mlx
 
 fclean:	clean
-		$(RM) $(NAME)
+		@-rm -f $(NAME)
 		rm -f $(LIB)
 		rm -f $(MLX)
 
