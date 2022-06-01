@@ -53,3 +53,5 @@ Example of a valid config file:
 
 <img src="images/valid_map_example.png" alt="valid configuration file"/>
 
+### My Intra 42 score
+[![mharriso's 42 cub3d Score](https://badge42.vercel.app/api/v2/cl3w02qb8005509mgrqkyukbw/project/2065144)](https://github.com/JaeSeoKim/badge42)
