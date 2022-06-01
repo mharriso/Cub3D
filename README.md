@@ -50,5 +50,6 @@ space					empty space (player can't see them)
 map can't be splitted by empty lines
 ```
 Example of a valid config file:
-<img src="images/valid_map_example.pnd" alt="valid configuration file"/>
+
+<img src="images/valid_map_example.png" alt="valid configuration file"/>
 
